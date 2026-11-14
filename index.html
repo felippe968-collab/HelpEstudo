@@ -1,0 +1,3665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>HelpEstudo</title>
+<style>
+/* ============================================================
+   HELPESTUDO - tema noturno, layout mobile-first
+   Todas as cores ficam aqui em cima pra facilitar ajustes
+   ============================================================ */
+:root{
+  --bg:#070b12;
+  --bg-2:#0b111c;
+  --card:#111a28;
+  --card-2:#16202f;
+  --line:#1e2b3f;
+  --line-2:#2a3a54;
+  --txt:#e9effb;
+  --muted:#8ea3c0;
+  --accent:#6c8cff;
+  --accent-2:#22d3a6;
+  --red:#ef4444;
+  --orange:#f97316;
+  --yellow:#eab308;
+  --green:#22c55e;
+  --r:16px;
+  --shadow:0 18px 40px -24px #000;
+  --nav-h:66px;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(900px 500px at 100% -10%, #17233a 0%, transparent 60%),
+    radial-gradient(700px 400px at -10% 0%, #131c2c 0%, transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:Arial,Helvetica,sans-serif;font-size:16px;color:inherit}
+*{font-family:Arial,Helvetica,sans-serif}
+button{cursor:pointer;border:0;background:none}
+h1,h2,h3,h4,p{margin:0}
+.hidden{display:none !important}
+a{color:var(--accent)}
+
+/* ---------- estrutura ---------- */
+#app{max-width:760px;margin:0 auto;padding:0 14px calc(var(--nav-h) + 78px)}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px}
+
+/* ---------- barra de topo ---------- */
+#topbar{
+  position:sticky;top:0;z-index:40;
+  backdrop-filter:blur(14px);
+  background:linear-gradient(to bottom, rgba(7,11,18,.96), rgba(7,11,18,.72));
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{
+  max-width:760px;margin:0 auto;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;
+}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.logo{
+  width:34px;height:34px;border-radius:11px;flex:0 0 auto;
+  background:linear-gradient(140deg,var(--accent),#a06cff 70%);
+  display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff;
+  box-shadow:0 8px 20px -10px var(--accent);
+}
+.brand-txt{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.brand-txt b{font-size:15px;letter-spacing:.2px}
+.brand-txt span{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.avatar{
+  width:38px;height:38px;border-radius:50%;margin-left:auto;flex:0 0 auto;
+  border:1.5px solid var(--line-2);background:var(--card-2);
+  display:grid;place-items:center;overflow:hidden;font-size:16px;font-weight:700;color:var(--muted);
+}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+.card + .card{margin-top:12px}
+.card-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.card-title h3{font-size:15px;font-weight:700;letter-spacing:.2px}
+.card-title .sp{margin-left:auto}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tiny{font-size:11.5px}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:46px;padding:0 16px;border-radius:12px;
+  font-weight:650;font-size:14.5px;letter-spacing:.1px;
+  background:var(--card-2);border:1px solid var(--line-2);color:var(--txt);
+  transition:transform .08s ease, filter .15s ease;
+}
+.btn:active{transform:scale(.975)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#8a6cff);border-color:transparent;color:#fff;box-shadow:0 12px 24px -14px var(--accent)}
+.btn.green{background:linear-gradient(135deg,#12b981,#22d3a6);border-color:transparent;color:#04231a}
+.btn.danger{background:#3a1418;border-color:#7a2430;color:#ffb4bb}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:38px;padding:0 12px;font-size:13px;border-radius:10px}
+.btn.xs{min-height:30px;padding:0 10px;font-size:12px;border-radius:9px;font-weight:600}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45}
+.icon-btn{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  border:1px solid var(--line-2);background:var(--card-2);font-size:15px;color:var(--muted);
+}
+.icon-btn.sm{width:34px;height:34px;border-radius:10px;font-size:13px}
+.row{display:flex;gap:8px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.grow{flex:1}
+
+/* ---------- home / contagem ---------- */
+.hero{position:relative;overflow:hidden}
+.hero:before{
+  content:"";position:absolute;inset:-40% -20% auto auto;width:260px;height:260px;
+  background:radial-gradient(circle,rgba(108,140,255,.22),transparent 65%);pointer-events:none;
+}
+.countdown{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px}
+.countdown .big{font-size:52px;font-weight:800;letter-spacing:-2px;line-height:1}
+.countdown .unit{font-size:15px;color:var(--muted);font-weight:600}
+.countdown.hot .big{color:#ff8a5b}
+.countdown.today .big{color:var(--green)}
+.hero-date{font-size:13px;color:var(--muted)}
+
+/* ---------- horas ---------- */
+.hours-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.stat{background:#0d1521;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.stat .v{font-size:17px;font-weight:750;margin-top:3px;letter-spacing:-.3px}
+.stat .v small{font-size:11px;font-weight:600;color:var(--muted)}
+.callout{
+  margin-top:12px;padding:12px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(34,211,166,.10),rgba(108,140,255,.08));
+  border:1px solid #24405a;font-size:13.5px;
+}
+.callout b{color:var(--accent-2)}
+.progress{height:9px;border-radius:99px;background:#0a111b;border:1px solid var(--line);overflow:hidden}
+.progress > i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .35s ease}
+.progress-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:6px}
+
+/* ---------- listas ---------- */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{
+  display:flex;align-items:center;gap:11px;
+  background:#0d1521;border:1px solid var(--line);border-radius:12px;
+  padding:11px 12px;text-align:left;width:100%;
+}
+.item:active{background:#101a29}
+.item[data-act]{cursor:pointer}
+.item .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.item .txt{min-width:0;flex:1}
+.item .txt b{display:block;font-size:14.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .txt span{display:block;font-size:11.5px;color:var(--muted);margin-top:1px}
+.item .right{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.chev{color:var(--line-2);font-size:18px;line-height:1}
+
+.empty{
+  text-align:center;padding:22px 14px;color:var(--muted);font-size:13.5px;
+  border:1px dashed var(--line-2);border-radius:12px;background:#0b1119;
+}
+.empty b{display:block;color:var(--txt);font-size:14.5px;margin-bottom:4px}
+
+/* ---------- chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 11px;border-radius:99px;font-size:12.5px;font-weight:600;
+  background:#0d1521;border:1px solid var(--line-2);color:var(--muted);
+}
+.chip.on{background:rgba(108,140,255,.16);border-color:var(--accent);color:#cdd8ff}
+.chip.tap:active{transform:scale(.96)}
+.chip .x{font-size:13px;color:var(--muted)}
+
+/* ---------- dificuldade em barrinhas ----------
+   I vermelho · II laranja · III amarelo · IV verde */
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end}
+.bar{
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;
+  padding:9px 6px 7px;border-radius:12px;min-height:82px;
+  background:#0a111b;border:1.4px solid var(--line-2);color:var(--muted);
+  font-weight:800;font-size:11.5px;letter-spacing:.04em;
+  transition:transform .09s ease, border-color .15s ease, background .15s ease;
+}
+.bar:active{transform:scale(.97)}
+.bar i{display:block;width:100%;border-radius:5px 5px 3px 3px;opacity:.32;transition:opacity .15s ease}
+.bar:nth-child(1) i{height:9px;background:var(--red)}
+.bar:nth-child(2) i{height:19px;background:var(--orange)}
+.bar:nth-child(3) i{height:29px;background:var(--yellow)}
+.bar:nth-child(4) i{height:39px;background:var(--green)}
+.bar.on{color:#fff}
+.bar.on i{opacity:1}
+.bar:nth-child(1).on{background:rgba(239,68,68,.16);border-color:var(--red)}
+.bar:nth-child(2).on{background:rgba(249,115,22,.16);border-color:var(--orange)}
+.bar:nth-child(3).on{background:rgba(234,179,8,.15);border-color:var(--yellow)}
+.bar:nth-child(4).on{background:rgba(34,197,94,.15);border-color:var(--green)}
+.bar-legend{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:7px;font-weight:700;letter-spacing:.04em}
+
+/* aviso de revisão */
+.warn{
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,rgba(239,68,68,.16),rgba(249,115,22,.12));
+  border:1px solid #7a2b30;border-radius:12px;padding:11px 12px;margin-top:12px;
+}
+.warn .wt{flex:1;min-width:0}
+.warn .wt b{display:block;font-size:12px;letter-spacing:.02em;color:#ffc2c2}
+.warn .wt span{display:block;font-size:11.5px;color:#e6b9b9;margin-top:2px;line-height:1.4}
+.badge.rev{background:rgba(239,68,68,.15);border-color:#7a2b30;color:#ffb0b0}
+
+/* ---------- calendário de estudos ---------- */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:2px}
+.day-pill{
+  display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 7px;
+  border-radius:11px;border:1.4px solid var(--line);background:#0a111b;color:var(--muted);
+  min-height:60px;justify-content:center;
+}
+.day-pill b{font-size:11px;font-weight:800;letter-spacing:.02em}
+.day-pill span{font-size:10.5px;font-weight:700;color:#7d8da6}
+.day-pill.on{background:rgba(108,140,255,.16);border-color:var(--accent);color:#dbe3ff}
+.day-pill.on span{color:#b9c6ee}
+.day-pill.hj:after{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent-2);margin-top:2px}
+.day-pill.hj b{color:var(--accent-2)}
+.day-pill.on.hj b{color:#dbe3ff}
+.blk{
+  display:flex;gap:11px;align-items:flex-start;
+  background:#0d1521;border:1px solid var(--line);border-radius:12px;padding:11px 12px;
+}
+.blk + .blk{margin-top:8px}
+.blk .hr{
+  font-size:11px;font-weight:800;color:#b9c8dd;white-space:nowrap;
+  background:#0a111b;border:1px solid var(--line-2);border-radius:8px;padding:4px 7px;line-height:1.2;text-align:center;
+}
+.blk .info{flex:1;min-width:0}
+.blk .info b{display:block;font-size:14px;font-weight:650}
+.blk .info .foco{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.4}
+.blk .info .met{font-size:10.5px;color:#6d7f99;margin-top:3px}
+.blk .acts{display:flex;gap:4px;flex:0 0 auto}
+.blk .acts .icon-btn{width:30px;height:30px;border-radius:9px;font-size:12px}
+.dot-sub{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.imp-file{font-size:12.5px;padding:9px 10px}
+
+/* ---------- questões (pergunta e resposta) ---------- */
+.qtext{font-size:16px;font-weight:650;line-height:1.45;margin:2px 0 4px;white-space:pre-wrap}
+.qmeta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted);margin:2px 0 10px}
+.opt{
+  display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;
+  background:#0d1521;border:1.4px solid var(--line-2);border-radius:12px;
+  padding:11px 12px;margin-top:8px;color:var(--txt);font-size:14px;line-height:1.4;
+  transition:border-color .14s ease, background .14s ease;
+}
+.opt:active{transform:scale(.995)}
+.opt .ltr{
+  flex:0 0 auto;width:24px;height:24px;border-radius:8px;background:#0a111b;border:1px solid var(--line-2);
+  display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:var(--muted);
+}
+.opt .otxt{flex:1;min-width:0;white-space:pre-wrap}
+.opt.ok{border-color:var(--green);background:rgba(34,197,94,.13)}
+.opt.ok .ltr{background:var(--green);color:#04231a;border-color:var(--green)}
+.opt.bad{border-color:var(--red);background:rgba(239,68,68,.12)}
+.opt.bad .ltr{background:var(--red);color:#2a0b0b;border-color:var(--red)}
+.qcomment{margin-top:12px;font-size:12.5px;color:#c3d1e4;background:#0d1521;border:1px solid var(--line);border-radius:10px;padding:10px 11px;line-height:1.5}
+.rad{width:22px;height:22px;flex:0 0 auto;accent-color:#6c8cff;margin:0}
+.badge{
+  font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 8px;border-radius:99px;border:1px solid var(--line-2);color:var(--muted);
+}
+.badge.d0{background:rgba(239,68,68,.15);border-color:#7a2630;color:#ff9c9c}
+.badge.d3{background:rgba(249,115,22,.15);border-color:#7a4520;color:#ffb27a}
+.badge.d4{background:rgba(234,179,8,.14);border-color:#7a6518;color:#ffe07a}
+.badge.d5{background:rgba(34,197,94,.14);border-color:#1f6a41;color:#8ff0b3}
+.badge.ok{background:rgba(34,211,166,.14);border-color:#1c6b58;color:#8ff0d8}
+
+/* ---------- checkbox de aula ---------- */
+.check{
+  position:relative;
+  width:26px;height:26px;border-radius:8px;flex:0 0 auto;
+  border:1.6px solid var(--line-2);background:#0a111b;display:grid;place-items:center;
+  font-size:14px;color:transparent;font-weight:800;
+}
+.check.on{background:var(--green);border-color:var(--green);color:#04231a}
+/* aumenta a área tocável sem aumentar o quadradinho */
+.check:after{content:"";position:absolute;inset:-10px}
+.item.done .txt b{text-decoration:line-through;color:var(--muted)}
+
+/* ---------- cabeçalho de página ---------- */
+.page-head{display:flex;align-items:center;gap:10px;margin:16px 0 12px}
+.page-head h2{font-size:19px;font-weight:750;letter-spacing:-.3px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+button.back{width:38px;height:38px;border-radius:11px;border:1px solid var(--line-2);background:var(--card-2);display:grid;place-items:center;font-size:17px;color:var(--txt);flex:0 0 auto}
+
+/* ---------- tela inicial: onboarding ---------- */
+.onboard{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:28px 16px calc(28px + env(safe-area-inset-bottom));
+}
+.onboard-card{width:100%;max-width:440px}
+.onboard-logo{
+  width:66px;height:66px;border-radius:20px;margin:0 auto 14px;
+  background:linear-gradient(140deg,var(--accent),#a06cff 70%);
+  display:grid;place-items:center;font-size:32px;
+  box-shadow:0 20px 45px -20px var(--accent);
+}
+.onboard h1{text-align:center;font-size:24px;letter-spacing:-.6px}
+.onboard p.sub{text-align:center;color:var(--muted);font-size:13.5px;margin:6px 0 20px}
+.photo-pick{display:flex;flex-direction:column;align-items:center;gap:9px;margin-bottom:18px}
+.photo-ring{
+  width:104px;height:104px;border-radius:50%;overflow:hidden;
+  border:2px dashed var(--line-2);background:#0d1521;
+  display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;
+}
+.photo-ring img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-ring.has{border-style:solid;border-color:var(--accent)}
+
+/* ---------- formulários ---------- */
+.field{margin-bottom:13px}
+.field > label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.04em}
+.input,textarea.input,select.input{
+  width:100%;min-height:48px;padding:12px 13px;border-radius:12px;
+  background:#0a111b;border:1.4px solid var(--line-2);color:var(--txt);
+  outline:none;transition:border-color .15s ease, box-shadow .15s ease;
+}
+textarea.input{min-height:86px;resize:vertical;line-height:1.45}
+.input:focus,textarea.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,140,255,.15)}
+.input::placeholder{color:#5b6c85}
+.hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+.info-box{
+  font-size:12px;color:var(--muted);line-height:1.6;
+  background:#0a111b;border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-top:8px;
+}
+.info-box b{color:var(--txt)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ---------- rodapé fixo: abas de concursos + navegação ---------- */
+#footer{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:linear-gradient(to top, rgba(7,11,18,.99) 40%, rgba(7,11,18,.86));
+  backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+#strip{
+  max-width:760px;margin:0 auto;padding:8px 12px 0;
+  display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;
+}
+#strip::-webkit-scrollbar{display:none}
+.ctab{
+  flex:0 0 auto;display:flex;align-items:center;gap:6px;
+  padding:6px 11px;border-radius:99px;font-size:12px;font-weight:650;
+  border:1px solid var(--line-2);background:#0d1521;color:var(--muted);white-space:nowrap;
+  max-width:190px;
+}
+.ctab span{overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.ctab.on{background:rgba(108,140,255,.16);border-color:var(--accent);color:#d5deff}
+.ctab.add{border-style:dashed;color:var(--accent);font-weight:800}
+#bottomNav{
+  max-width:760px;margin:0 auto;padding:4px 6px 0;
+  display:grid;grid-template-columns:repeat(6,1fr);align-items:stretch;
+}
+.nav-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  min-height:52px;border-radius:12px;font-size:9.5px;font-weight:700;letter-spacing:.01em;
+  color:#71809a;padding:6px 1px 8px;
+}
+.nav-btn .ic{font-size:18px;line-height:1;filter:grayscale(1) opacity(.75)}
+.nav-btn.on{color:var(--txt)}
+.nav-btn.on .ic{filter:none}
+
+/* ---------- modal ---------- */
+#modalRoot{position:fixed;inset:0;z-index:90;display:none}
+#modalRoot.open{display:block}
+#exemploRoot{position:fixed;inset:0;z-index:120;display:none}
+#exemploRoot.open{display:block}
+.modal-backdrop{position:absolute;inset:0;background:rgba(3,6,11,.72);backdrop-filter:blur(4px)}
+.modal{
+  position:absolute;left:0;right:0;bottom:0;
+  max-height:92vh;overflow-y:auto;
+  background:linear-gradient(180deg,#111a28,#0c131f);
+  border:1px solid var(--line-2);border-bottom:0;
+  border-radius:20px 20px 0 0;
+  padding:16px 16px calc(18px + env(safe-area-inset-bottom));
+  animation:slideUp .22s ease;
+  max-width:760px;margin:0 auto;
+}
+@keyframes slideUp{from{transform:translateY(22px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.modal-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.modal-head h3{font-size:16.5px;font-weight:750;flex:1}
+.modal-foot{display:flex;gap:8px;margin-top:16px}
+.modal-foot .btn{flex:1}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:calc(var(--nav-h) + 74px);transform:translate(-50%,14px);
+  background:#1b2739;border:1px solid var(--line-2);color:var(--txt);
+  padding:10px 16px;border-radius:99px;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;z-index:120;
+  max-width:86vw;text-align:center;
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- prática: definições e cards ---------- */
+.practice-stage{
+  background:linear-gradient(180deg,#101a29,#0b1320);
+  border:1px solid var(--line-2);border-radius:18px;padding:18px;
+  min-height:230px;display:flex;flex-direction:column;justify-content:center;gap:12px;
+}
+.qterm{font-size:20px;font-weight:750;letter-spacing:-.3px;line-height:1.3}
+.qdef{
+  font-size:15px;line-height:1.6;color:#c9d6ea;
+  border-top:1px solid var(--line);padding-top:12px;
+  white-space:pre-wrap;
+}
+.flip{perspective:1200px;cursor:pointer;min-height:230px}
+.flip-in{position:relative;transition:transform .45s cubic-bezier(.3,.9,.3,1);transform-style:preserve-3d;min-height:230px}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:20px;text-align:center;border-radius:18px;
+}
+.face.front{background:linear-gradient(160deg,#131f32,#0b1320);border:1px solid var(--line-2)}
+.face.back{background:linear-gradient(160deg,rgba(34,211,166,.14),#0b1320);border:1px solid #1c6b58;transform:rotateY(180deg)}
+.face .tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:800}
+.face .big-t{font-size:19px;font-weight:750;line-height:1.35;white-space:pre-wrap}
+
+/* ---------- caça-palavras ---------- */
+.ws-grid{
+  display:grid;gap:2px;margin:0 auto;width:100%;max-width:440px;
+  background:#0a111b;border:1px solid var(--line-2);border-radius:14px;padding:6px;
+  touch-action:manipulation;
+}
+.ws-cell{
+  aspect-ratio:1/1;display:grid;place-items:center;
+  font-size:clamp(9px,2.6vw,15px);font-weight:700;color:#b9c8dd;
+  border-radius:5px;background:#0f1927;border:1px solid transparent;
+  transition:background .12s ease,color .12s ease;
+}
+.ws-cell.sel{background:rgba(108,140,255,.28);border-color:var(--accent);color:#fff}
+.ws-cell.found{background:rgba(34,197,94,.22);border-color:#2c8f5e;color:#c6ffdc}
+.ws-cell.hint{background:rgba(234,179,8,.18);border-color:#8a7216;color:#ffe9a3}
+.ws-words{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.ws-word{
+  font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:5px 9px;border-radius:8px;
+  background:#0d1521;border:1px solid var(--line-2);color:var(--muted);
+}
+.ws-word.done{background:rgba(34,197,94,.14);border-color:#1f6a41;color:#8ff0b3;text-decoration:line-through}
+
+/* ---------- utilidades de layout ---------- */
+.sec{margin-top:14px}
+.spacer{height:8px}
+.fab-row{display:flex;gap:8px;margin-top:12px}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--muted)}
+.divider{height:1px;background:var(--line);margin:14px 0}
+
+@media(min-width:560px){
+  .hours-grid{grid-template-columns:repeat(4,1fr)}
+  .countdown .big{font-size:60px}
+}
+@media(max-width:360px){
+  .brand-txt span{max-width:110px}
+  .nav-btn{font-size:9px}
+}
+
+/* ---------- plano de estudo (semáforo) ---------- */
+.plan{margin-top:12px;border:1px solid var(--line-2);border-radius:12px;padding:12px;background:#0d1521}
+.plan .plan-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.plan .pill{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid currentColor}
+.plan .plan-t{font-size:15px;font-weight:700;margin-top:8px;line-height:1.35}
+.plan .plan-d{font-size:13px;margin-top:6px;line-height:1.45}
+.plan.g{background:rgba(34,197,94,.10);border-color:#1f6a41}.plan.g .pill,.plan.g .plan-t b{color:#8ff0b3}
+.plan.y{background:rgba(234,179,8,.10);border-color:#7a6518}.plan.y .pill,.plan.y .plan-t b{color:#ffe07a}
+.plan.r{background:rgba(239,68,68,.12);border-color:#7a2630}.plan.r .pill,.plan.r .plan-t b{color:#ff9c9c}
+</style>
+</head>
+<body>
+
+<!-- ======================= PRIMEIRO ACESSO ======================= -->
+<div id="onboarding" class="onboard hidden">
+  <div class="onboard-card">
+    <div class="onboard-logo">📚</div>
+    <h1>HelpEstudo</h1>
+    <p class="sub">Seu concurso, suas matérias, suas horas.<br>Vamos começar com seu perfil.</p>
+
+    <form id="onboardForm" class="card">
+      <div class="photo-pick">
+        <label for="obPhoto" class="photo-ring" id="obPhotoRing">
+          <span id="obPhotoTxt">Toque para<br>escolher a foto</span>
+        </label>
+        <input id="obPhoto" type="file" accept="image/*" class="hidden">
+        <button type="button" class="btn xs ghost" data-act="obPickPhoto">📷 Escolher foto</button>
+      </div>
+
+      <div class="field">
+        <label for="obName">Seu nome</label>
+        <input id="obName" class="input" type="text" placeholder="Ex: Felippe Lopes" autocomplete="name" maxlength="40" required>
+      </div>
+
+      <div class="field">
+        <label for="obBirth">Data de nascimento</label>
+        <input id="obBirth" class="input" type="date" required>
+      </div>
+
+      <button class="btn primary block" type="submit">Começar a estudar →</button>
+      <p class="hint" style="text-align:center;margin-top:10px">Tudo fica salvo só no seu aparelho. Você pode fazer backup em Dados.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ======================= APP ======================= -->
+<div id="app" class="hidden">
+  <header id="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <div class="logo">📚</div>
+        <div class="brand-txt">
+          <b>HelpEstudo</b>
+          <span id="brandSub">Seu concurso</span>
+        </div>
+      </div>
+      <button class="avatar" id="topAvatar" data-act="editProfile" aria-label="Perfil"></button>
+    </div>
+  </header>
+
+  <main id="view"></main>
+
+  <div id="footer">
+    <div id="strip"></div>
+    <nav id="bottomNav">
+      <button class="nav-btn" data-act="setTab" data-tab="home"><span class="ic">🏠</span>Início</button>
+      <button class="nav-btn" data-act="setTab" data-tab="subjects"><span class="ic">📖</span>Matérias</button>
+      <button class="nav-btn" data-act="setTab" data-tab="agenda"><span class="ic">🗓️</span>Agenda</button>
+      <button class="nav-btn" data-act="setTab" data-tab="practice"><span class="ic">🎯</span>Praticar</button>
+      <button class="nav-btn" data-act="setTab" data-tab="concursos"><span class="ic">🏆</span>Concursos</button>
+      <button class="nav-btn" data-act="setTab" data-tab="dados"><span class="ic">🗄️</span>Dados</button>
+    </nav>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="exemploRoot"></div>
+<div id="toast"></div>
+
+<script>
+/* ==================================================================
+   HELPESTUDO v1.0
+   App de estudos para concursos: perfil, concursos, matérias,
+   conteúdos, horas, dificuldade e práticas (definições, cards,
+   caça-palavras). Tudo salvo no localStorage do aparelho.
+   ================================================================== */
+
+/* ---------- constantes ---------- */
+const STORAGE_KEY = "helpestudo_v1";
+const APP_VERSION = "1.4";
+const DIFFS = [
+  { v: 0, label: "Muito difícil" },
+  { v: 3, label: "Difícil" },
+  { v: 4, label: "Média" },
+  { v: 5, label: "Fácil" }
+];
+const SUBJECT_COLORS = ["#6c8cff","#22d3a6","#f97316","#e879f9","#38bdf8","#f43f5e","#a3e635","#fbbf24"];
+const SUBJECT_SUGGESTIONS = ["Português","Matemática","Raciocínio Lógico","Informática","Direito Constitucional","Direito Administrativo","Legislação","Atualidades","Direito Penal","Direito Processual Penal"];
+
+/* dias da semana na ordem que aparece na agenda (segunda primeiro) */
+const DAYS = [
+  { n:1, long:"Segunda-feira", short:"Seg" },
+  { n:2, long:"Terça-feira",   short:"Ter" },
+  { n:3, long:"Quarta-feira",  short:"Qua" },
+  { n:4, long:"Quinta-feira",  short:"Qui" },
+  { n:5, long:"Sexta-feira",   short:"Sex" },
+  { n:6, long:"Sábado",        short:"Sáb" },
+  { n:0, long:"Domingo",       short:"Dom" }
+];
+const ROMAN = ["I","II","III","IV"];
+
+function dayName(n, short){
+  const d = DAYS.find(x=>x.n === Number(n));
+  return d ? (short ? d.short : d.long) : "—";
+}
+function norm(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+}
+/* descobre o dia da semana a partir do texto do JSON importado */
+function dayFromText(txt){
+  const t = norm(txt);
+  if(!t) return null;
+  if(t.includes("seg")) return 1;
+  if(t.includes("ter")) return 2;
+  if(t.includes("qua")) return 3;
+  if(t.includes("qui")) return 4;
+  if(t.includes("sex")) return 5;
+  if(t.includes("sab")) return 6;
+  if(t.includes("dom")) return 0;
+  return null;
+}
+/* "19:00 - 20:00" -> 60 minutos */
+function minutosDoHorario(h){
+  const m = String(h||"").match(/(\d{1,2})[:h](\d{2})?/g);
+  if(!m || m.length < 2) return 0;
+  const toMin = x => { const p = x.split(/[:h]/); return (Number(p[0])||0)*60 + (Number(p[1])||0); };
+  const ini = toMin(m[0]), fim = toMin(m[1]);
+  const d = fim - ini;
+  return d > 0 && d <= 12*60 ? d : 0;
+}
+/* conteúdo que precisa de revisão: dificuldade marcada abaixo do verde */
+function needsReview(t){
+  return (t.difficulty === 0 || t.difficulty) && Number(t.difficulty) < 5;
+}
+
+/* ---------- armazenamento ----------
+   Em navegador normal usa localStorage. Se estiver bloqueado
+   (modo privado / prévia), cai para memória e o app continua rodando. */
+const store = (()=>{
+  try{
+    const k = "__he_test__";
+    window.localStorage.setItem(k, "1");
+    window.localStorage.removeItem(k);
+    return window.localStorage;
+  }catch(e){
+    const mem = {};
+    return {
+      getItem: k => (k in mem ? mem[k] : null),
+      setItem: (k,v) => { mem[k] = String(v); },
+      removeItem: k => { delete mem[k]; }
+    };
+  }
+})();
+
+/* ---------- estado global ---------- */
+let db = null;             // dados persistidos
+let ui = {
+  tab: "home",
+  cid: null,               // concurso aberto
+  sid: null,               // matéria aberta
+  tid: null,               // conteúdo aberto
+  practice: null,          // {type, tid, index, revealed, flipped, hits, misses}
+  psub: null,              // matéria aberta na aba Praticar
+  ws: { start: null, sel: [] },
+  tmpPhoto: ""
+};
+
+/* ---------- helpers ---------- */
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function pad(n){ return String(n).padStart(2,"0"); }
+function todayISO(){ const d = new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function parseLocalDate(iso){
+  if(!iso) return null;
+  const p = String(iso).split("-").map(Number);
+  if(p.length < 3 || !p[0]) return null;
+  return new Date(p[0], p[1]-1, p[2]);
+}
+function daysUntil(iso){
+  const target = parseLocalDate(iso);
+  if(!target) return null;
+  const n = new Date();
+  const hoje = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  return Math.round((target - hoje) / 86400000);
+}
+function dateBR(iso){
+  const d = parseLocalDate(iso);
+  if(!d) return "";
+  return pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear();
+}
+function fmtMin(min){
+  min = Math.max(0, Math.round(Number(min) || 0));
+  if(min < 60) return min + "min";
+  const h = Math.floor(min/60), m = min%60;
+  return m ? h+"h "+m+"min" : h+"h";
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove("on"), 2200);
+}
+function photoURL(){
+  return db && db.profile && db.profile.photo ? db.profile.photo : "";
+}
+function initials(){
+  const n = (db && db.profile && db.profile.name) || "?";
+  return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+}
+function idade(){
+  const d = parseLocalDate(db?.profile?.birthDate);
+  if(!d) return null;
+  const n = new Date();
+  let a = n.getFullYear()-d.getFullYear();
+  const m = n.getMonth()-d.getMonth();
+  if(m < 0 || (m === 0 && n.getDate() < d.getDate())) a--;
+  return a >= 0 && a < 130 ? a : null;
+}
+
+/* ==================================================================
+   PERSISTÊNCIA
+   ================================================================== */
+function newDB(){
+  return {
+    version: 1,
+    createdAt: new Date().toISOString(),
+    profile: { name:"", photo:"", birthDate:"" },
+    concursos: [],
+    log: [],          // {id, cid, sid, tid, minutes, date, note}
+    activeId: null
+  };
+}
+
+function normalize(d){
+  const base = newDB();
+  if(!d || typeof d !== "object") return base;
+  const out = Object.assign(base, d);
+  out.profile = Object.assign(base.profile, d.profile || {});
+  out.concursos = Array.isArray(d.concursos) ? d.concursos : [];
+  out.log = Array.isArray(d.log) ? d.log : [];
+
+  // garante que cada concurso/matéria/conteúdo tenha tudo que o app usa
+  out.concursos.forEach(c=>{
+    c.id = c.id || uid();
+    c.name = c.name || "Concurso sem nome";
+    c.subjects = Array.isArray(c.subjects) ? c.subjects : [];
+    c.hoursTarget = Number(c.hoursTarget) || 0;
+    c.dailyHours = Number(c.dailyHours) || 0;
+    c.subjects.forEach((s,i)=>{
+      s.id = s.id || uid();
+      s.name = s.name || "Matéria";
+      s.color = s.color || SUBJECT_COLORS[i % SUBJECT_COLORS.length];
+      s.topics = Array.isArray(s.topics) ? s.topics : [];
+      s.topics.forEach(t=>{
+        t.id = t.id || uid();
+        t.name = t.name || "Conteúdo";
+        t.done = !!t.done;
+        t.difficulty = (t.difficulty === 0 || t.difficulty) ? Number(t.difficulty) : null;
+        t.definitions = Array.isArray(t.definitions) ? t.definitions : [];
+        t.cards = Array.isArray(t.cards) ? t.cards : [];
+        t.questions = Array.isArray(t.questions)
+          ? t.questions.map(q=>({
+              id: q.id || uid(),
+              text: q.text || "",
+              options: Array.isArray(q.options) ? q.options.map(o=>String(o)) : [],
+              correct: Number(q.correct) || 0,
+              comment: q.comment || ""
+            })).filter(q=>q.text && q.options.length >= 2)
+          : [];
+        t.ws = t.ws && Array.isArray(t.ws.grid) ? t.ws : null;
+      });
+    });
+  });
+
+  // agenda: sempre 7 dias, com os blocos normalizados
+  out.concursos.forEach(c=>{
+    const dias = (c.schedule && Array.isArray(c.schedule.days)) ? c.schedule.days : null;
+    const novo = DAYS.map(d=>{
+      const achado = dias ? dias.find(x=>Number(x.dia) === d.n) : null;
+      const blocks = achado && Array.isArray(achado.blocks) ? achado.blocks : [];
+      return {
+        dia: d.n,
+        cargaHoras: Number(achado && achado.cargaHoras) || 0,
+        observacao: (achado && achado.observacao) || "",
+        blocks: blocks.map(b=>({
+          id: b.id || uid(),
+          horario: b.horario || "",
+          minutos: Number(b.minutos) || minutosDoHorario(b.horario) || 0,
+          disciplina: b.disciplina || "",
+          foco: b.foco || "",
+          metodologia: b.metodologia || ""
+        }))
+      };
+    });
+    c.schedule = {
+      days: novo,
+      meta: (c.schedule && c.schedule.meta) || {},
+      importedAt: (c.schedule && c.schedule.importedAt) || null
+    };
+  });
+  return out;
+}
+
+function loadDB(){
+  try{
+    const raw = store.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    return normalize(JSON.parse(raw));
+  }catch(e){
+    console.warn("Falha ao ler dados", e);
+    return null;
+  }
+}
+
+function saveDB(){
+  try{
+    store.setItem(STORAGE_KEY, JSON.stringify(db));
+    return true;
+  }catch(e){
+    console.error(e);
+    toast("Não consegui salvar. Armazenamento cheio?");
+    return false;
+  }
+}
+
+/* ==================================================================
+   CONSULTAS E CÁLCULOS
+   ================================================================== */
+function concursoAtual(){
+  if(!db) return null;
+  return db.concursos.find(c => c.id === ui.cid) || db.concursos[0] || null;
+}
+function minutesOf(cid, sid, tid){
+  return db.log.reduce((sum, l)=>{
+    if(l.cid !== cid) return sum;
+    if(sid && l.sid !== sid) return sum;
+    if(tid && l.tid !== tid) return sum;
+    return sum + (Number(l.minutes) || 0);
+  }, 0);
+}
+function subjectMinutes(c, sid){
+  // soma tudo da matéria (inclui horas lançadas direto na matéria e nos conteúdos)
+  return minutesOf(c.id, sid);
+}
+function stats(c){
+  const minutes = minutesOf(c.id);
+  const target = Math.max(0, Number(c.hoursTarget) || 0) * 60;
+  const remaining = Math.max(0, target - minutes);
+  const days = daysUntil(c.examDate);
+  const perDay = days != null && days > 0 ? Math.ceil(remaining / days) : remaining;
+  const pct = target > 0 ? Math.min(100, (minutes / target) * 100) : 0;
+  const topics = c.subjects.reduce((a,s)=>a.concat(s.topics), []);
+  return {
+    minutes, target, remaining, days, perDay, pct,
+    topicsTotal: topics.length,
+    topicsDone: topics.filter(t=>t.done).length
+  };
+}
+function diffLabel(v){
+  const d = DIFFS.find(x=>x.v === Number(v));
+  return d ? d.label : "Sem nota";
+}
+function avgDiff(subject){
+  const vals = subject.topics.filter(t=>t.difficulty === 0 || t.difficulty).map(t=>Number(t.difficulty));
+  if(!vals.length) return null;
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+
+/* ==================================================================
+   NAVEGAÇÃO
+   ================================================================== */
+function go(tab, opts={}){
+  ui.tab = tab;
+  if(opts.cid !== undefined) ui.cid = opts.cid;
+  if(opts.sid !== undefined) ui.sid = opts.sid;
+  if(opts.tid !== undefined) ui.tid = opts.tid;
+  ui.practice = null;                        // tocar numa aba sempre sai do treino
+  if(tab !== "practice") ui.psub = null;     // e volta para a lista de matérias
+  ui.ws = { start:null, sel:[] };
+  window.scrollTo({ top:0, behavior:"instant" in window ? "instant" : "auto" });
+  render();
+}
+
+function selectConcurso(cid){
+  ui.cid = cid;
+  if(db) { db.activeId = cid; saveDB(); }
+  ui.sid = null; ui.tid = null;
+  ui.tab = "home";
+  render();
+}
+
+/* ==================================================================
+   RENDER PRINCIPAL
+   ================================================================== */
+function render(){
+  if(!db || !db.profile || !db.profile.name){
+    document.getElementById("onboarding").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
+    return;
+  }
+  document.getElementById("onboarding").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  // concurso ativo: o último aberto
+  if(!concursoAtual() && db.concursos.length){
+    ui.cid = db.activeId || db.concursos[0].id;
+  }
+  renderTopbar();
+  renderStrip();
+  renderView();
+  renderNav();
+}
+
+function renderTopbar(){
+  const c = concursoAtual();
+  const sub = document.getElementById("brandSub");
+  sub.textContent = c ? c.name : "Nenhum concurso ainda";
+  const av = document.getElementById("topAvatar");
+  av.innerHTML = photoURL()
+    ? '<img src="'+photoURL()+'" alt="foto">'
+    : esc(initials());
+}
+
+function renderNav(){
+  document.querySelectorAll(".nav-btn").forEach(b=>{
+    b.classList.toggle("on", b.dataset.tab === ui.tab);
+  });
+}
+
+function renderStrip(){
+  const strip = document.getElementById("strip");
+  if(!db.concursos.length){ strip.innerHTML = ""; return; }
+  strip.innerHTML = db.concursos.map(c=>{
+    const on = c.id === (concursoAtual()||{}).id ? " on" : "";
+    return '<button class="ctab'+on+'" data-act="openConcurso" data-cid="'+c.id+'"><span>'+esc(c.name)+'</span></button>';
+  }).join("") + '<button class="ctab add" data-act="newConcurso">+ novo</button>';
+}
+
+function renderView(){
+  const v = document.getElementById("view");
+  const c = concursoAtual();
+  switch(ui.tab){
+    case "home":      v.innerHTML = viewHome(c); break;
+    case "agenda":    v.innerHTML = viewAgenda(c); break;
+    case "subjects":  v.innerHTML = viewSubjects(c); break;
+    case "subject":   v.innerHTML = viewSubject(c); break;
+    case "topic":     v.innerHTML = viewTopic(c); break;
+    case "practice":  v.innerHTML = viewPractice(c); break;
+    case "concursos": v.innerHTML = viewConcursos(); break;
+    case "dados":     v.innerHTML = viewDados(); break;
+    default:          v.innerHTML = viewHome(c);
+  }
+}
+
+/* ==================================================================
+   TELA: INÍCIO
+   ================================================================== */
+function viewHome(c){
+  if(!c){
+    return `
+      <div class="page-head"><h2>Início</h2></div>
+      <div class="card">
+        <div class="empty">
+          <b>Vamos criar seu primeiro concurso</b>
+          Dá um nome (ex: Polícia Militar da Bahia), a data da prova e a meta de horas.
+        </div>
+        <button class="btn primary block" style="margin-top:12px" data-act="newConcurso">+ Criar concurso</button>
+      </div>`;
+  }
+
+  const st = stats(c);
+  let cdClass = "countdown", cdBig = "", cdLbl = "";
+  if(st.days == null){
+    cdClass += ""; cdBig = "—"; cdLbl = "Defina a data da prova";
+  } else if(st.days > 1){
+    cdClass += st.days <= 30 ? " hot" : "";
+    cdBig = st.days; cdLbl = "dias para sua prova";
+  } else if(st.days === 1){
+    cdClass += " hot"; cdBig = "1"; cdLbl = "dia para sua prova";
+  } else if(st.days === 0){
+    cdClass += " today"; cdBig = "0"; cdLbl = "É hoje. Boa prova! 🍀";
+  } else {
+    cdBig = "—"; cdLbl = "Prova já realizada em " + dateBR(c.examDate);
+  }
+
+  const meta = Number(c.hoursTarget) || 0;
+  // texto do cálculo: só faz sentido falar de "por dia" quando ainda há prazo
+  let perDayTxt;
+  if(st.remaining <= 0) perDayTxt = "Meta batida! 🎉 Você já estudou tudo o que planejou.";
+  else if(st.days == null) perDayTxt = "Defina a data da prova para calcular quanto precisa por dia.";
+  else if(st.days > 0) perDayTxt = "Para atingir você precisa de <b>"+fmtMin(st.perDay)+" por dia</b>.";
+  else if(st.days === 0) perDayTxt = "É hoje! Faltam <b>"+fmtMin(st.remaining)+"</b> para bater a sua meta.";
+  else perDayTxt = "A prova já passou. Ficaram <b>"+fmtMin(st.remaining)+"</b> para a meta.";
+  const perDayCell = (st.days != null && st.days > 0 && st.remaining > 0) ? fmtMin(st.perDay) : "—";
+
+  const subjRows = c.subjects.length
+    ? '<div class="list">' + c.subjects.map(s=>{
+        const tot = s.topics.length, done = s.topics.filter(t=>t.done).length;
+        const hrs = fmtMin(subjectMinutes(c, s.id));
+        const ad = avgDiff(s);
+        const badge = ad == null ? "" : '<span class="badge d'+roundDiff(ad)+'">'+diffLabel(roundDiff(ad))+'</span>';
+        const rev = s.topics.filter(t=>needsReview(t)).length;
+        const revBadge = rev ? '<span class="badge rev">⚠️ '+rev+'</span>' : "";
+        return `<button class="item" data-act="openSubject" data-sid="${s.id}">
+          <span class="dot" style="background:${s.color}"></span>
+          <span class="txt"><b>${esc(s.name)}</b><span>${done}/${tot} conteúdos · ${hrs}</span></span>
+          <span class="right">${revBadge}${badge}<span class="chev">›</span></span>
+        </button>`;
+      }).join("") + "</div>"
+    : '<div class="empty"><b>Nenhuma matéria ainda</b>Adicione Português, Informática, Legislação...</div>';
+
+  // ---- agenda de hoje ----
+  const sch = c.schedule;
+  const hojeN = new Date().getDay();
+  const diaHoje = sch ? (sch.days || []).find(d=>d.dia === hojeN) : null;
+  const blocosHoje = diaHoje ? diaHoje.blocks : [];
+  const semanaMin = sch ? (sch.days||[]).reduce((a,d)=>a+d.blocks.reduce((x,b)=>x+(Number(b.minutos)||0),0),0) : 0;
+  const temAgenda = !!(sch && (sch.days||[]).some(d=>d.blocks.length));
+  const agendaCard = `
+    <div class="card">
+      <div class="card-title"><h3>🗓️ Calendário de estudos</h3><span class="sp"></span>
+        <button class="btn xs" data-act="setTab" data-tab="agenda">${temAgenda ? "Abrir" : "Montar"}</button>
+      </div>
+      ${temAgenda
+        ? `<div class="eyebrow">Hoje · ${dayName(hojeN)}</div>
+           ${blocosHoje.length
+             ? '<div style="margin-top:8px">' + blocosHoje.slice(0,4).map(b=>{
+                 const sub = c.subjects.find(x=>norm(x.name) === norm(b.disciplina));
+                 return `<div class="blk" style="padding:9px 10px">
+                   <div class="hr">${esc(b.horario || fmtMin(b.minutos))}</div>
+                   <div class="info"><b><span class="dot-sub" style="background:${sub?sub.color:"var(--line-2)"}"></span>${esc(b.disciplina || "Estudo")}</b>
+                     ${b.foco ? `<div class="foco">${esc(b.foco)}</div>` : ""}</div>
+                 </div>`;
+               }).join("") + (blocosHoje.length > 4 ? `<p class="tiny muted" style="margin-top:8px">+${blocosHoje.length-4} bloco(s) hoje</p>` : "") + "</div>"
+             : `<p class="small muted" style="margin-top:6px">Hoje é ${dayName(hojeN)} e não tem bloco marcado. Bom dia para revisar o que está em vermelho.</p>`}
+           <div class="progress-label" style="margin-top:10px"><span>${fmtMin(semanaMin)} na semana</span><span>${(sch.days||[]).filter(d=>d.blocks.length).length} dias com estudo</span></div>`
+        : `<p class="small muted">Monte os horários de cada matéria na semana ou importe um cronograma pronto em JSON.</p>
+           <div class="row" style="margin-top:10px">
+             <button class="btn sm grow" data-act="setTab" data-tab="agenda">Montar semana</button>
+             <button class="btn sm" data-act="importSchedule">📥 Importar JSON</button>
+           </div>`}
+    </div>`;
+
+  return `
+    <div class="page-head"><h2>Início</h2><span class="sp grow"></span>
+      <button class="btn xs ghost" data-act="editConcurso" data-cid="${c.id}">⚙️</button>
+    </div>
+
+    <div class="card hero">
+      <div class="eyebrow">Seu concurso</div>
+      <h1 style="font-size:21px;letter-spacing:-.4px;margin-top:4px">${esc(c.name)}</h1>
+      <div class="${cdClass}">
+        <span class="big">${cdBig}</span>
+        <span class="unit">${cdLbl}</span>
+      </div>
+      <div class="hero-date">${c.examDate ? "Prova em " + dateBR(c.examDate) : "Sem data definida"}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>⏱️ Horas de estudo</h3><span class="sp"></span>
+        <button class="btn xs" data-act="openHours" data-cid="${c.id}">+ Registrar</button>
+      </div>
+      <div class="hours-grid">
+        <div class="stat"><div class="k">Tempo necessário</div><div class="v">${meta}h</div></div>
+        <div class="stat"><div class="k">Estudadas</div><div class="v">${fmtMin(st.minutes)}</div></div>
+        <div class="stat"><div class="k">Restantes</div><div class="v">${fmtMin(st.remaining)}</div></div>
+        <div class="stat"><div class="k">Por dia</div><div class="v">${perDayCell}</div></div>
+      </div>
+      <div class="progress"><i style="width:${st.pct.toFixed(1)}%"></i></div>
+      <div class="progress-label">
+        <span>${Math.round(st.pct)}% do tempo necessário</span>
+        <span>${st.topicsDone}/${st.topicsTotal} conteúdos concluídos</span>
+      </div>
+      <div class="callout">${perDayTxt}</div>
+      ${planoHtml(c)}
+    </div>
+
+    ${agendaCard}
+
+    <div class="card">
+      <div class="card-title"><h3>📖 Matérias</h3><span class="sp"></span>
+        <button class="btn xs ghost" data-act="importSubjects" data-cid="${c.id}" title="Importar matérias">📥</button>
+        <button class="btn xs" data-act="newSubject" data-cid="${c.id}">+ Matéria</button>
+      </div>
+      ${subjRows}
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>⚡ Atalhos</h3></div>
+      <div class="row wrap">
+        <button class="btn sm" data-act="openHours" data-cid="${c.id}">⏱️ Estudar agora</button>
+        <button class="btn sm" data-act="setTab" data-tab="practice">🎯 Praticar</button>
+        <button class="btn sm" data-act="newConcurso">+ Concurso</button>
+      </div>
+    </div>
+  `;
+}
+function roundDiff(ad){
+  if(ad <= 1.5) return 0;
+  if(ad <= 3.5) return 3;
+  if(ad <= 4.5) return 4;
+  return 5;
+}
+
+/* ==================================================================
+   TELA: MATÉRIAS
+   ================================================================== */
+function viewSubjects(c){
+  if(!c){
+    return `<div class="page-head"><h2>Matérias</h2></div>
+      <div class="card"><div class="empty"><b>Comece pelo concurso</b>Crie um concurso para adicionar matérias.</div>
+      <button class="btn primary block" style="margin-top:12px" data-act="newConcurso">+ Criar concurso</button></div>`;
+  }
+  const list = c.subjects.length
+    ? '<div class="list">' + c.subjects.map(s=>{
+        const tot = s.topics.length, done = s.topics.filter(t=>t.done).length;
+        const pct = tot ? Math.round(done/tot*100) : 0;
+        return `<div class="item" data-act="openSubject" data-sid="${s.id}">
+          <span class="dot" style="background:${s.color}"></span>
+          <span class="txt"><b>${esc(s.name)}</b>
+            <span>${tot} conteúdo${tot===1?"":"s"} · ${done} concluído${done===1?"":"s"} · ${fmtMin(subjectMinutes(c,s.id))}</span>
+          </span>
+          <span class="right">
+            <button class="btn xs ghost" data-act="renameSubject" data-sid="${s.id}" title="Editar nome da matéria" aria-label="Editar nome da matéria">✏️</button>
+            <span class="badge">${pct}%</span>
+          </span>
+        </div>`;
+      }).join("") + "</div>"
+    : '<div class="empty"><b>Nenhuma matéria ainda</b>Toque em "+ Matéria" e escolha uma sugestão.</div>';
+
+  return `
+    <div class="page-head"><h2>Matérias</h2><span class="sp grow"></span>
+      <button class="btn xs ghost" data-act="importSubjects" data-cid="${c.id}" title="Importar matérias">📥</button>
+      <button class="btn xs" data-act="newSubject" data-cid="${c.id}">+ Matéria</button>
+    </div>
+    <p class="muted small" style="margin-bottom:12px">${esc(c.name)}</p>
+    ${list}
+  `;
+}
+
+/* ==================================================================
+   TELA: MATÉRIA (conteúdos)
+   ================================================================== */
+function viewSubject(c){
+  if(!c) return viewSubjects(c);
+  const s = c.subjects.find(x=>x.id === ui.sid);
+  if(!s){ ui.tab = "subjects"; return viewSubjects(c); }
+  const hrs = fmtMin(subjectMinutes(c, s.id));
+  const done = s.topics.filter(t=>t.done).length;
+  const revisar = s.topics.filter(t=>needsReview(t));
+
+  const topics = s.topics.length
+    ? '<div class="list">' + s.topics.map(t=>{
+        const mins = minutesOf(c.id, s.id, t.id);
+        const badge = (t.difficulty === 0 || t.difficulty)
+          ? '<span class="badge d'+t.difficulty+'">'+diffLabel(t.difficulty)+'</span>' : "";
+        const rev = needsReview(t) ? '<span class="badge rev">revisar</span>' : "";
+        const extras = [];
+        if(t.definitions.length) extras.push("📝 "+t.definitions.length);
+        if(t.cards.length) extras.push("🃏 "+t.cards.length);
+        if((t.questions||[]).length) extras.push("❓ "+t.questions.length);
+        if(t.ws) extras.push("🔎");
+        return `<div class="item ${t.done?"done":""}">
+          <button class="check ${t.done?"on":""}" data-act="toggleTopic" data-sid="${s.id}" data-tid="${t.id}">✓</button>
+          <button class="txt" style="background:none;text-align:left;padding:0" data-act="openTopic" data-sid="${s.id}" data-tid="${t.id}">
+            <b>${esc(t.name)}</b>
+            <span>${mins ? fmtMin(mins) : "sem horas"}${extras.length ? " · " + extras.join(" ") : ""}</span>
+          </button>
+          <span class="right">${rev}${badge}
+            <button class="btn xs ghost" data-act="renameTopic" data-sid="${s.id}" data-tid="${t.id}" title="Editar nome do conteúdo" aria-label="Editar nome do conteúdo">✏️</button>
+          </span>
+        </div>`;
+      }).join("") + "</div>"
+    : `<div class="empty"><b>Nenhum conteúdo nesta matéria</b>Ex: MSOffice, Crase, Lei 8.112...
+        <button class="btn primary sm" style="margin-top:14px" data-act="newTopic" data-sid="${s.id}">+ Criar conteúdo</button>
+      </div>`;
+
+  return `
+    <div class="page-head">
+      <button class="back" data-act="setTab" data-tab="subjects">‹</button>
+      <h2>${esc(s.name)}</h2>
+      <span class="sp grow"></span>
+      <button class="btn xs ghost" data-act="importTopics" data-sid="${s.id}" title="Importar conteúdos">📥</button>
+      <button class="btn xs ghost" data-act="renameSubject" data-sid="${s.id}" title="Editar nome da matéria">✏️</button>
+      <button class="btn xs ghost" data-act="delSubject" data-sid="${s.id}" title="Apagar matéria">🗑️</button>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div><div class="eyebrow">Horas nesta matéria</div>
+          <div style="font-size:22px;font-weight:750;letter-spacing:-.4px;margin-top:2px">${hrs}</div></div>
+        <div style="text-align:right"><div class="eyebrow">Conteúdos</div>
+          <div style="font-size:22px;font-weight:750;letter-spacing:-.4px;margin-top:2px">${done}/${s.topics.length}</div></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary sm grow" data-act="openHours" data-cid="${c.id}" data-sid="${s.id}">⏱️ Digitar horas estudadas</button>
+        <button class="btn sm" data-act="newTopic" data-sid="${s.id}">+ Conteúdo</button>
+      </div>
+    </div>
+
+    ${revisar.length ? `<div class="warn">
+      <div class="wt"><b>⚠️ REVISAR ESSA MATÉRIA E PRATICAR!</b>
+        <span>${revisar.length} conteúdo${revisar.length===1?"":"s"} com dificuldade entre I e III: ${esc(revisar.slice(0,3).map(t=>t.name).join(", "))}${revisar.length>3?"…":""}</span></div>
+      <button class="btn xs" data-act="openTopic" data-sid="${s.id}" data-tid="${revisar[0].id}">Ver</button>
+    </div>` : ""}
+
+    <div class="sec">${topics}</div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="card-title"><h3>💡 Dica</h3></div>
+      <p class="small muted">Marque a aula concluída, dê uma nota de dificuldade e registre as horas.
+      Dentro de cada conteúdo você pode criar definições, cards e caça-palavras.</p>
+    </div>
+  `;
+}
+
+/* ==================================================================
+   TELA: CONTEÚDO
+   ================================================================== */
+function currentTopic(){
+  const c = concursoAtual(); if(!c) return { c:null, s:null, t:null };
+  const s = c.subjects.find(x=>x.id === ui.sid);
+  if(!s) return { c, s:null, t:null };
+  const t = s.topics.find(x=>x.id === ui.tid);
+  return { c, s, t };
+}
+
+function viewTopic(c){
+  const s = c && c.subjects.find(x=>x.id === ui.sid);
+  const t = s && s.topics.find(x=>x.id === ui.tid);
+  if(!s || !t){ ui.tab = "subjects"; return viewSubjects(c); }
+  const mins = minutesOf(c.id, s.id, t.id);
+  const totalMin = minutesOf(c.id, s.id);
+
+  const temNota = (t.difficulty === 0 || t.difficulty);
+  // barrinhas: I vermelho · II laranja · III amarelo · IV verde
+  const diffBars = DIFFS.map((d,i)=>{
+    const on = temNota && Number(t.difficulty) === d.v;
+    return `<button class="bar ${on?"on":""}" data-act="setDiff" data-sid="${s.id}" data-tid="${t.id}" data-v="${d.v}"
+      role="radio" aria-checked="${on}" aria-label="${i+1} de 4 - ${d.label}"><i></i><b>${ROMAN[i]}</b></button>`;
+  }).join("");
+  const nivelTxt = temNota
+    ? "Nível " + ROMAN[DIFFS.findIndex(d=>d.v === Number(t.difficulty))] + " · " + diffLabel(t.difficulty)
+    : "Nenhum nível marcado";
+  // prática sugerida quando o conteúdo está marcado para revisão
+  const praticaSugerida = t.definitions.length ? "def" : (t.cards.length ? "card" : (t.ws ? "ws" : null));
+
+  const defs = t.definitions.length
+    ? t.definitions.map(d=>`<div class="item" style="align-items:flex-start">
+        <span class="txt"><b>${esc(d.term)}</b><span style="white-space:pre-wrap;color:#b9c8dd">${esc(d.def)}</span></span>
+        <button class="icon-btn sm" data-act="delDef" data-tid="${t.id}" data-id="${d.id}">✕</button>
+      </div>`).join("")
+    : '<div class="empty">Nenhuma definição. Ex: “O que é o Excel?”</div>';
+
+  const cards = t.cards.length
+    ? t.cards.map(d=>`<div class="item" style="align-items:flex-start">
+        <span class="txt"><b>${esc(d.front)}</b><span style="white-space:pre-wrap;color:#b9c8dd">${esc(d.back)}</span></span>
+        <button class="icon-btn sm" data-act="delCard" data-tid="${t.id}" data-id="${d.id}">✕</button>
+      </div>`).join("")
+    : '<div class="empty">Nenhum card. Ex: “Era Vargas?” / resposta no verso.</div>';
+
+  const questoes = (t.questions && t.questions.length)
+    ? t.questions.map((q,qi)=>`<div class="item" style="align-items:flex-start">
+        <span class="txt"><b>${qi+1}. ${esc(q.text)}</b>
+          <span style="color:#b9c8dd">${q.options.length} alternativas · correta: <b style="color:#8ff0b3">${LETRAS[q.correct]||"?"}</b>${q.comment ? " · com comentário" : ""}</span></span>
+        <button class="icon-btn sm" data-act="editQuestion" data-tid="${t.id}" data-qid="${q.id}" title="Editar">✏️</button>
+        <button class="icon-btn sm" data-act="delQuestion" data-tid="${t.id}" data-qid="${q.id}" title="Apagar">✕</button>
+      </div>`).join("")
+    : '<div class="empty">Nenhuma questão ainda. Ex: “O que é a crase?” com 4 alternativas.</div>';
+
+  const wsWords = t.ws && t.ws.words && t.ws.words.length
+    ? t.ws.words.map(w=>`<span class="chip">${esc(w)}<button class="x" data-act="delWsWord" data-tid="${t.id}" data-w="${esc(w)}">✕</button></span>`).join("")
+    : '<span class="tiny muted">Adicione de 4 a 10 palavras e toque em gerar.</span>';
+
+  return `
+    <div class="page-head">
+      <button class="back" data-act="backTopic">‹</button>
+      <h2>${esc(t.name)}</h2>
+      <span class="sp grow"></span>
+      <button class="btn xs ghost" data-act="renameTopic" data-sid="${s.id}" data-tid="${t.id}" title="Editar nome do conteúdo">✏️</button>
+      <button class="btn xs ghost" data-act="delTopic" data-sid="${s.id}" data-tid="${t.id}">🗑️</button>
+    </div>
+    <p class="tiny muted" style="margin:-6px 0 12px">${esc(s.name)}</p>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;gap:12px">
+        <button class="item" style="border:0;background:none;padding:0;width:auto" data-act="toggleTopic" data-sid="${s.id}" data-tid="${t.id}">
+          <span class="check ${t.done?"on":""}">✓</span>
+          <span class="txt"><b>Aula concluída</b><span>${t.done ? "Concluída ✔" : "Toque para marcar"}</span></span>
+        </button>
+        <div style="text-align:right"><div class="eyebrow">Horas aqui</div>
+          <div style="font-size:18px;font-weight:750">${mins ? fmtMin(mins) : "0min"}</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="eyebrow" style="margin-bottom:8px">Dificuldade do conteúdo</div>
+      <div class="bars">${diffBars}</div>
+      <div class="bar-legend"><span>I vermelho</span><span>II laranja</span><span>III amarelo</span><span>IV verde</span></div>
+      <p class="hint" style="margin-top:8px"><b style="color:var(--txt)">${nivelTxt}</b> · toque na mesma barrinha para limpar.</p>
+
+      ${needsReview(t) ? `<div class="warn">
+        <div class="wt"><b>⚠️ REVISAR ESSA MATÉRIA E PRATICAR!</b>
+          <span>Nível ${ROMAN[DIFFS.findIndex(d=>d.v === Number(t.difficulty))]} (${esc(diffLabel(t.difficulty))}) pede reforço: revise as definições, os cards e o caça-palavras.</span></div>
+        ${praticaSugerida ? `<button class="btn xs" data-act="startPractice" data-type="${praticaSugerida}" data-tid="${t.id}">🎯 Praticar</button>` : ""}
+      </div>` : ""}
+      <button class="btn green block" style="margin-top:14px" data-act="openHours" data-cid="${c.id}" data-sid="${s.id}" data-tid="${t.id}">
+        ⏱️ Inserir quantas horas estudei hoje
+      </button>
+      <p class="hint" style="text-align:center">Isso abate direto das horas restantes do concurso (${fmtMin(totalMin)} nesta matéria).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>🎯 Praticar este conteúdo</h3></div>
+      <div class="row wrap">
+        <button class="btn sm" data-act="startPractice" data-type="def" data-tid="${t.id}">📝 Definições (${t.definitions.length})</button>
+        <button class="btn sm" data-act="startPractice" data-type="card" data-tid="${t.id}">🃏 Cards (${t.cards.length})</button>
+        <button class="btn sm" data-act="startPractice" data-type="quiz" data-tid="${t.id}">❓ Questões (${(t.questions||[]).length})</button>
+        <button class="btn sm" data-act="startPractice" data-type="ws" data-tid="${t.id}">🔎 Caça-palavras</button>
+      </div>
+      <button class="btn sm ghost block" style="margin-top:10px" data-act="importPairs" data-tid="${t.id}">📥 Importar nome,definição</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>❓ Questões</h3><span class="sp"></span>
+        <button class="btn xs" data-act="newQuestion" data-tid="${t.id}">+ Questão</button>
+      </div>
+      <div class="row wrap" style="margin-bottom:10px">
+        <button class="btn xs ghost" data-act="importQuestions" data-tid="${t.id}">📥 Importar JSON</button>
+        <button class="btn xs ghost" data-act="exemploQuestoes">ℹ️ Exemplo</button>
+      </div>
+      <div class="list">${questoes}</div>
+      ${(t.questions||[]).length ? `<button class="btn primary block" style="margin-top:10px" data-act="startPractice" data-type="quiz" data-tid="${t.id}">▶️ Responder ${t.questions.length} ${t.questions.length===1?"questão":"questões"}</button>` : ""}
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>📝 Definições</h3><span class="sp"></span>
+        <button class="btn xs ghost" data-act="importPairs" data-kind="def" data-tid="${t.id}">📥 Importar</button>
+        <button class="btn xs" data-act="newDef" data-tid="${t.id}">+ Nova</button>
+      </div>
+      <div class="list">${defs}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>🃏 Cards (vira e vê)</h3><span class="sp"></span>
+        <button class="btn xs ghost" data-act="importPairs" data-kind="card" data-tid="${t.id}">📥 Importar</button>
+        <button class="btn xs" data-act="newCard" data-tid="${t.id}">+ Novo</button>
+      </div>
+      <div class="list">${cards}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>🔎 Caça-palavras</h3><span class="sp"></span>
+        <button class="btn xs ghost" data-act="importPairs" data-kind="ws" data-tid="${t.id}">📥 Importar</button>
+        <button class="btn xs" data-act="newWsWord" data-tid="${t.id}">+ Palavra</button>
+      </div>
+      <div class="chips" style="margin-bottom:12px">${wsWords}</div>
+      <button class="btn block" data-act="genWs" data-tid="${t.id}">🎲 Gerar / atualizar caça-palavras</button>
+      ${t.ws ? `<button class="btn primary block" style="margin-top:8px" data-act="startPractice" data-type="ws" data-tid="${t.id}">▶️ Jogar</button>` : ""}
+    </div>
+  `;
+}
+
+
+/* ==================================================================
+   TELA: AGENDA (calendário diário de estudos)
+   ================================================================== */
+function emptySchedule(){
+  return { days: DAYS.map(d=>({ dia:d.n, cargaHoras:0, observacao:"", blocks:[] })), meta:{}, importedAt:null };
+}
+function ensureSchedule(c){
+  if(!c.schedule || !Array.isArray(c.schedule.days) || c.schedule.days.length !== 7){
+    c.schedule = emptySchedule();
+  }
+  if(!c.schedule.meta) c.schedule.meta = {};
+  return c.schedule;
+}
+function scheduleMinutes(c){
+  return (c.schedule && c.schedule.days ? c.schedule.days : [])
+    .reduce((a,d)=> a + d.blocks.reduce((x,b)=> x + (Number(b.minutos)||0), 0), 0);
+}
+function diaDaSemana(c, n){
+  const dias = ensureSchedule(c).days || [];
+  return dias.find(d=>Number(d.dia) === Number(n)) || { dia:n, cargaHoras:0, observacao:"", blocks:[] };
+}
+function findBlock(c, bid){
+  for(const d of ((c.schedule && c.schedule.days) || [])){
+    const b = d.blocks.find(x=>x.id === bid);
+    if(b) return { dia:d, block:b };
+  }
+  return null;
+}
+
+function viewAgenda(c){
+  if(!c){
+    return `<div class="page-head"><h2>Calendário</h2></div>
+      <div class="card"><div class="empty"><b>Crie um concurso primeiro</b>A agenda é por concurso.</div>
+      <button class="btn primary block" style="margin-top:12px" data-act="newConcurso">+ Criar concurso</button></div>`;
+  }
+  const sch = ensureSchedule(c);
+  const hoje = new Date().getDay();
+  const sel = (ui.day == null) ? hoje : Number(ui.day);
+  const dia = diaDaSemana(c, sel);
+  const totalMin = scheduleMinutes(c);
+  const ativos = sch.days.filter(d=>d.blocks.length).length;
+  const meta = sch.meta || {};
+  const carga = meta.carga || null;
+  const dist = meta.dist || null;
+
+  const semana = DAYS.map(d=>{
+    const dd = diaDaSemana(c, d.n);
+    const min = dd.blocks.reduce((a,b)=>a+(Number(b.minutos)||0),0);
+    const cls = (d.n === sel ? " on" : "") + (d.n === hoje ? " hj" : "");
+    return `<button class="day-pill${cls}" data-act="setDay" data-day="${d.n}">
+      <b>${d.short}</b><span>${min ? fmtMin(min) : "—"}</span>
+    </button>`;
+  }).join("");
+
+  const blocos = dia.blocks.length
+    ? dia.blocks.map(b=>{
+        const sub = c.subjects.find(x=>norm(x.name) === norm(b.disciplina));
+        return `<div class="blk">
+          <div class="hr">${esc(b.horario || (b.minutos ? fmtMin(b.minutos) : "—"))}</div>
+          <div class="info">
+            <b><span class="dot-sub" style="background:${sub?sub.color:"var(--line-2)"}"></span>${esc(b.disciplina || "Estudo")}</b>
+            ${b.foco ? `<div class="foco">${esc(b.foco)}</div>` : ""}
+            ${b.metodologia ? `<div class="met">${esc(b.metodologia)}</div>` : ""}
+            ${b.minutos ? `<div class="met">${fmtMin(b.minutos)}</div>` : ""}
+          </div>
+          <div class="acts">
+            <button class="icon-btn" data-act="blockHours" data-bid="${b.id}" data-sid="${sub?sub.id:""}" data-min="${Number(b.minutos)||0}" title="Registrar horas">⏱️</button>
+            <button class="icon-btn" data-act="editBlock" data-day="${dia.dia}" data-bid="${b.id}" title="Editar">✏️</button>
+          </div>
+        </div>`;
+      }).join("")
+    : `<div class="empty"><b>Nada marcado em ${dayName(sel)}</b>Toque em "+ Bloco" para colocar um horário de estudo.</div>`;
+
+  return `
+    <div class="page-head"><h2>Calendário</h2><span class="sp grow"></span>
+      <button class="btn xs" data-act="newBlock" data-day="${sel}">+ Bloco</button>
+    </div>
+    <p class="muted small" style="margin:-6px 0 12px">${esc(c.name)}</p>
+
+    <div class="card">
+      <div class="card-title"><h3>⏱️ Meta de estudo por dia</h3></div>
+      ${planoHtml(c)}
+    </div>
+
+    <div class="card">
+      <div class="week">${semana}</div>
+      <div class="progress-label" style="margin-top:10px">
+        <span>${fmtMin(totalMin)} por semana</span>
+        <span>${ativos} dia${ativos===1?"":"s"} com estudo</span>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn sm grow" data-act="importSchedule">📥 Importar JSON</button>
+        <button class="btn sm ghost" data-act="exemploCronograma" title="Exemplo de JSON">ℹ️</button>
+        <button class="btn sm ghost" data-act="clearSchedule">🧹 Limpar</button>
+      </div>
+    </div>
+
+    ${carga ? `<div class="card">
+      <div class="card-title"><h3>📌 Carga horária do plano</h3></div>
+      ${carga.horas_liquidas ? `<div class="kv"><span>Horas líquidas</span><b>${esc(String(carga.horas_liquidas))}h/semana</b></div>` : ""}
+      ${carga.dias_uteis ? `<div class="kv"><span>Dias úteis</span><b style="text-align:right;max-width:60%">${esc(String(carga.dias_uteis))}</b></div>` : ""}
+      ${carga.sabado_e_feriados ? `<div class="kv"><span>Sábado / feriados</span><b style="text-align:right;max-width:60%">${esc(String(carga.sabado_e_feriados))}</b></div>` : ""}
+      ${carga.domingo ? `<div class="kv"><span>Domingo</span><b style="text-align:right;max-width:60%">${esc(String(carga.domingo))}</b></div>` : ""}
+    </div>` : ""}
+
+    ${(dist && Array.isArray(dist.blocos)) ? `<div class="card">
+      <div class="card-title"><h3>🎯 Distribuição de questões</h3><span class="sp"></span>
+        <span class="badge">${esc(String(dist.total || ""))} questões</span></div>
+      ${dist.blocos.map(b=>{
+        const subs = Array.isArray(b.subdisciplinas) ? b.subdisciplinas : [];
+        const nomes = subs.map(x=> typeof x === "string" ? x : (x && x.nome) || "").filter(Boolean);
+        return `<div class="kv"><span>${esc(b.bloco || b.disciplina || "Bloco")}<br><span class="tiny">${esc(b.disciplina||"")}${nomes.length ? " · " + esc(nomes.join(", ")) : ""}</span></span><b>${esc(String(b.questoes||""))}</b></div>`;
+      }).join("")}
+    </div>` : ""}
+
+    <div class="card">
+      <div class="card-title"><h3>${dayName(sel)}${sel===hoje ? " · hoje" : ""}</h3><span class="sp"></span>
+        <button class="btn xs" data-act="newBlock" data-day="${sel}">+ Bloco</button>
+      </div>
+      ${dia.observacao ? `<p class="tiny muted" style="margin-bottom:10px">${esc(dia.observacao)}</p>` : ""}
+      ${blocos}
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>💡 Como funciona</h3></div>
+      <p class="small muted">A agenda é um plano da semana: cada bloco tem horário, matéria e foco.
+      O botão ⏱️ lança as horas do bloco direto nas suas horas estudadas, e o ✏️ edita ou apaga.</p>
+    </div>
+  `;
+}
+
+/* ==================================================================
+   TELA: PRATICAR (hub)
+   ================================================================== */
+/* quantas práticas existem numa matéria */
+function practiceCounts(s){
+  const tot = { def:0, card:0, quiz:0, ws:0, total:0 };
+  s.topics.forEach(t=>{
+    tot.def  += t.definitions.length;
+    tot.card += t.cards.length;
+    tot.quiz += (t.questions || []).length;
+    tot.ws   += t.ws ? 1 : 0;
+  });
+  tot.total = tot.def + tot.card + tot.quiz + tot.ws;
+  return tot;
+}
+
+function practiceResumo(s){
+  const n = practiceCounts(s);
+  if(!n.total) return "Nada para praticar ainda";
+  const p = [];
+  if(n.def)  p.push("📝 " + n.def + (n.def===1 ? " definição" : " definições"));
+  if(n.card) p.push("🃏 " + n.card + (n.card===1 ? " card" : " cards"));
+  if(n.quiz) p.push("❓ " + n.quiz + (n.quiz===1 ? " questão" : " questões"));
+  if(n.ws)   p.push("🔎 " + (n.ws===1 ? "caça-palavras" : "caça-palavras"));
+  return p.join(" · ");
+}
+
+function viewPractice(c){
+  if(ui.practice) return renderRunner(c);
+  if(!c){
+    return `<div class="page-head"><h2>Praticar</h2></div>
+      <div class="card"><div class="empty">Crie um concurso para começar a praticar.</div></div>`;
+  }
+
+  /* ---- nível 2: conteúdos de uma matéria ---- */
+  if(ui.psub){
+    const s = c.subjects.find(x=>x.id === ui.psub);
+    if(!s){ ui.psub = null; return viewPractice(c); }
+    const rows = s.topics.map(t=>{
+      const n = t.definitions.length + t.cards.length + ((t.questions||[]).length) + (t.ws ? 1 : 0);
+      if(!n) return "";
+      return `<div class="item" style="align-items:flex-start;flex-direction:column;gap:8px">
+        <div style="width:100%"><b style="font-size:14px">${esc(t.name)}</b>
+          <div class="tiny muted">${esc(s.name)}</div></div>
+        <div class="row wrap">
+          ${t.definitions.length ? `<button class="btn xs" data-act="startPractice" data-type="def" data-tid="${t.id}">📝 ${t.definitions.length}</button>`:""}
+          ${t.cards.length ? `<button class="btn xs" data-act="startPractice" data-type="card" data-tid="${t.id}">🃏 ${t.cards.length}</button>`:""}
+          ${(t.questions && t.questions.length) ? `<button class="btn xs" data-act="startPractice" data-type="quiz" data-tid="${t.id}">❓ ${t.questions.length}</button>`:""}
+          ${t.ws ? `<button class="btn xs" data-act="startPractice" data-type="ws" data-tid="${t.id}">🔎</button>`:""}
+        </div>
+      </div>`;
+    }).join("");
+
+    return `
+      <div class="page-head">
+        <button class="back" data-act="practiceBack">‹</button>
+        <h2>${esc(s.name)}</h2>
+      </div>
+      <p class="muted small" style="margin-bottom:12px">${esc(practiceResumo(s))}</p>
+      ${rows ? '<div class="list">'+rows+'</div>'
+        : `<div class="empty"><b>Nada para praticar nesta matéria</b>Abra um conteúdo e crie definições, cards, questões ou caça-palavras.
+            <button class="btn sm" style="margin-top:14px" data-act="openSubject" data-sid="${s.id}">Abrir a matéria</button></div>`}
+      <button class="btn sm block" style="margin-top:12px" data-act="importPairs" data-sid="${s.id}">📥 Importar cards, definições e caça-palavras</button>
+      <div class="row" style="margin-top:12px">
+        <button class="btn sm ghost grow" data-act="openSubject" data-sid="${s.id}">Ver a matéria e criar mais conteúdo</button>
+      </div>
+    `;
+  }
+
+  /* ---- nível 1: só as matérias ---- */
+  const rows = c.subjects.map(s=>{
+    const n = practiceCounts(s);
+    return `<div class="item" data-act="practiceSubject" data-sid="${s.id}">
+      <span class="dot" style="background:${s.color}"></span>
+      <span class="txt"><b>${esc(s.name)}</b><span>${esc(practiceResumo(s))}</span></span>
+      <span class="right">
+        ${n.total ? `<span class="badge">${n.total}</span>` : ""}
+        <span class="chev">›</span>
+      </span>
+    </div>`;
+  }).join("");
+
+  return `
+    <div class="page-head"><h2>Praticar</h2></div>
+    <p class="muted small" style="margin-bottom:12px">Escolha a matéria e pratique os conteúdos de <b>${esc(c.name)}</b>.</p>
+    ${rows ? '<div class="list">'+rows+'</div>'
+      : `<div class="empty"><b>Nenhuma matéria ainda</b>Crie uma matéria e dentro dela um conteúdo para começar.
+          <button class="btn sm primary" style="margin-top:14px" data-act="setTab" data-tab="subjects">Ir para Matérias</button></div>`}
+  `;
+}
+
+/* ==================================================================
+   PRÁTICA: montagem e execução
+   ================================================================== */
+function findTopicById(tid){
+  for(const c of db.concursos){
+    for(const s of c.subjects){
+      const t = s.topics.find(x=>x.id === tid);
+      if(t) return { concurso:c, subject:s, topic:t };
+    }
+  }
+  return null;
+}
+
+function startPractice(type, tid){
+  const found = findTopicById(tid);
+  if(!found) return toast("Conteúdo não encontrado");
+  ui.cid = found.concurso.id;
+  ui.sid = found.subject.id;
+  ui.tid = tid;
+  ui.practice = { type, tid, index:0, revealed:false, flipped:false, hits:0, misses:0, answered:null, summary:false };
+  ui.tab = "practice";
+  ui.ws = { start:null, sel:[] };
+  render();
+}
+
+const LETRAS = ["A","B","C","D","E","F"];
+
+function renderRunner(c){
+  const p = ui.practice;
+  const found = findTopicById(p.tid);
+  if(!found){ ui.practice = null; return viewPractice(c); }
+  const t = found.topic;
+
+  if(p.type === "def"){
+    const items = t.definitions;
+    if(!items.length){ ui.practice = null; return viewPractice(c); }
+    const i = Math.min(p.index, items.length-1);
+    const it = items[i];
+    return `
+      <div class="page-head">
+        <button class="back" data-act="endPractice">‹</button>
+        <h2>Definições</h2>
+        <span class="sp grow"></span>
+        <span class="badge">${i+1}/${items.length}</span>
+      </div>
+      <div class="practice-stage">
+        <div class="eyebrow">${esc(t.name)}</div>
+        <div class="qterm">${esc(it.term)}</div>
+        <div class="row" style="gap:6px">
+          <button class="icon-btn sm" data-act="speak" data-text="${esc(it.term)}" title="Ouvir">🔊</button>
+          <span class="tiny muted">Responda em voz alta e depois confira.</span>
+        </div>
+        ${p.revealed
+          ? '<div class="qdef">'+esc(it.def)+'</div>'
+          : '<button class="btn primary" data-act="reveal">Mostrar definição</button>'}
+      </div>
+      <div class="row" style="margin-top:12px">
+        ${p.revealed ? `
+          <button class="btn green grow" data-act="grade" data-ok="1">Acertei ✔</button>
+          <button class="btn danger grow" data-act="grade" data-ok="0">Errei ✖</button>
+        ` : `<button class="btn grow" data-act="nextDef">Pular ›</button>`}
+      </div>
+      <div class="row" style="margin-top:10px;justify-content:center">
+        <span class="tiny muted">Acertos: ${p.hits} · Erros: ${p.misses}</span>
+      </div>
+    `;
+  }
+
+  if(p.type === "card"){
+    const items = t.cards;
+    if(!items.length){ ui.practice = null; return viewPractice(c); }
+    const i = Math.min(p.index, items.length-1);
+    const it = items[i];
+    return `
+      <div class="page-head">
+        <button class="back" data-act="endPractice">‹</button>
+        <h2>Cards</h2>
+        <span class="sp grow"></span>
+        <span class="badge">${i+1}/${items.length}</span>
+      </div>
+      <div class="flip ${p.flipped?"on":""}" data-act="flip">
+        <div class="flip-in">
+          <div class="face front">
+            <div class="tag">${esc(t.name)} · frente</div>
+            <div class="big-t">${esc(it.front)}</div>
+            <div class="tiny muted">toque para virar</div>
+          </div>
+          <div class="face back">
+            <div class="tag">resposta</div>
+            <div class="big-t">${esc(it.back)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn grow" data-act="prevCard">‹ Anterior</button>
+        <button class="btn primary grow" data-act="nextCard">Próximo ›</button>
+      </div>
+    `;
+  }
+
+  if(p.type === "quiz"){
+    const items = t.questions || [];
+    if(!items.length){ ui.practice = null; return viewPractice(c); }
+    if(p.summary){
+      const total = p.hits + p.misses;
+      const pct = total ? Math.round(p.hits * 100 / total) : 0;
+      return `
+        <div class="page-head">
+          <button class="back" data-act="endPractice">‹</button>
+          <h2>Questões</h2>
+        </div>
+        <div class="practice-stage" style="text-align:center">
+          <div class="eyebrow">${esc(t.name)}</div>
+          <div style="font-size:44px;font-weight:800;letter-spacing:-1px;margin:6px 0">${p.hits}<span style="color:var(--muted);font-size:22px">/${total}</span></div>
+          <div class="small muted">${pct}% de acerto</div>
+          <p class="small muted" style="margin-top:10px">${pct >= 80 ? "Mandou bem! Pode avançar." : pct >= 50 ? "Bom começo. Revise o que errou." : "Volte nas definições e nos cards e tente de novo."}</p>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary grow" data-act="againQuiz">🔁 Refazer</button>
+          <button class="btn grow" data-act="endPractice">Sair</button>
+        </div>
+      `;
+    }
+    const i = Math.min(p.index, items.length-1);
+    const q = items[i];
+    const respondida = (p.answered !== null && p.answered !== undefined);
+    const opcoes = q.options.map((o,oi)=>{
+      let cls = "";
+      if(respondida){
+        if(oi === Number(q.correct)) cls = " ok";
+        else if(oi === Number(p.answered)) cls = " bad";
+      }
+      return `<button class="opt${cls}" data-act="answerQuestion" data-i="${oi}" ${respondida ? 'aria-disabled="true"' : ""}>
+        <span class="ltr">${LETRAS[oi] || oi+1}</span><span class="otxt">${esc(o)}</span>
+      </button>`;
+    }).join("");
+    const acertou = respondida && Number(p.answered) === Number(q.correct);
+    return `
+      <div class="page-head">
+        <button class="back" data-act="endPractice">‹</button>
+        <h2>Questões</h2>
+        <span class="sp grow"></span>
+        <span class="badge">${i+1}/${items.length}</span>
+      </div>
+      <div class="practice-stage">
+        <div class="eyebrow">${esc(t.name)}</div>
+        <div class="qmeta"><span>✔ ${p.hits}</span><span>✖ ${p.misses}</span></div>
+        <div class="qtext">${esc(q.text)}</div>
+        <div class="tiny muted">Escolha a alternativa correta</div>
+        ${opcoes}
+        ${respondida ? `<div class="qcomment">
+            <b style="color:${acertou?"#8ff0b3":"#ffb0b0"}">${acertou ? "✔ Acertou!" : "✖ Errou. A correta é " + (LETRAS[q.correct]||"") + ": " + esc(q.options[q.correct]||"")}</b>
+            ${q.comment ? `<div style="margin-top:6px">${esc(q.comment)}</div>` : ""}
+          </div>` : ""}
+      </div>
+      <div class="row" style="margin-top:12px">
+        ${respondida
+          ? `<button class="btn primary grow" data-act="nextQuestion">${i+1 >= items.length ? "Ver resultado" : "Próxima questão ›"}</button>`
+          : `<span class="tiny muted" style="margin:auto">Toque em uma alternativa</span>`}
+      </div>
+    `;
+  }
+
+  // caça-palavras
+  const ws = t.ws;
+  if(!ws){ ui.practice = null; return viewPractice(c); }
+  return renderWsBoard(t, ws);
+}
+
+function renderWsBoard(t, ws){
+  const size = ws.size;
+  const foundCells = new Set();
+  (ws.placed||[]).forEach(p=>{
+    if((ws.found||[]).includes(p.word)) p.cells.forEach(([r,c])=>foundCells.add(r+"-"+c));
+  });
+  const selSet = new Set((ui.ws.sel||[]).map(([r,c])=>r+"-"+c));
+  const start = ui.ws.start;
+
+  let cells = "";
+  for(let r=0;r<size;r++){
+    for(let c=0;c<size;c++){
+      const key = r+"-"+c;
+      const cls = foundCells.has(key) ? "found"
+        : (start && start[0]===r && start[1]===c) ? "sel"
+        : selSet.has(key) ? "sel" : "";
+      cells += `<button class="ws-cell ${cls}" data-act="wsCell" data-tid="${t.id}" data-r="${r}" data-c="${c}">${esc(ws.grid[r][c])}</button>`;
+    }
+  }
+  const words = (ws.words||[]).map(w=>{
+    const done = (ws.found||[]).includes(w);
+    return `<span class="ws-word ${done?"done":""}">${esc(w)}</span>`;
+  }).join("");
+
+  const allDone = (ws.words||[]).every(w => (ws.found||[]).includes(w));
+
+  return `
+    <div class="page-head">
+      <button class="back" data-act="endPractice">‹</button>
+      <h2>Caça-palavras</h2>
+      <span class="sp grow"></span>
+      <span class="badge">${(ws.found||[]).length}/${(ws.words||[]).length}</span>
+    </div>
+    <p class="tiny muted" style="margin:-6px 0 10px">${esc(t.name)} · toque na primeira e na última letra da palavra.</p>
+    <div class="ws-grid" id="wsGrid" style="grid-template-columns:repeat(${size},1fr)">${cells}</div>
+    <div class="ws-words">${words}</div>
+    ${allDone ? '<div class="callout" style="margin-top:12px">🎉 Você achou todas as palavras!</div>' : ''}
+    <div class="row" style="margin-top:12px">
+      <button class="btn grow" data-act="wsReset" data-tid="${t.id}">🔄 Recomeçar</button>
+      <button class="btn ghost grow" data-act="wsReveal" data-tid="${t.id}">👁️ Gabarito</button>
+    </div>
+    <button class="btn block ghost" style="margin-top:8px" data-act="endPractice">‹ Voltar ao conteúdo</button>
+  `;
+}
+
+/* ==================================================================
+   CAÇA-PALAVRAS: geração
+   ================================================================== */
+const DIRS = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+
+function normWord(w){
+  return String(w||"").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z]/g,"");
+}
+
+function buildWs(rawWords){
+  const words = [];
+  rawWords.forEach(w=>{
+    const n = normWord(w);
+    if(n.length >= 3 && n.length <= 14 && !words.includes(n)) words.push(n);
+  });
+  if(!words.length) return null;
+
+  const longest = Math.max.apply(null, words.map(w=>w.length));
+  const size = Math.max(9, Math.min(16, longest + 2, Math.max(9, longest)));
+  const grid = Array.from({length:size}, ()=> Array(size).fill(""));
+  const placed = [];
+
+  const ordered = words.slice().sort((a,b)=>b.length-a.length);
+  ordered.forEach(w=>{
+    let ok = false;
+    for(let attempt=0; attempt<500 && !ok; attempt++){
+      const d = DIRS[Math.floor(Math.random()*DIRS.length)];
+      const r0 = Math.floor(Math.random()*size);
+      const c0 = Math.floor(Math.random()*size);
+      const cells = [];
+      let r = r0, c = c0, fits = true;
+      for(let k=0;k<w.length;k++){
+        if(r<0 || c<0 || r>=size || c>=size){ fits = false; break; }
+        const cur = grid[r][c];
+        if(cur && cur !== w[k]){ fits = false; break; }
+        cells.push([r,c]);
+        r += d[0]; c += d[1];
+      }
+      if(!fits) continue;
+      cells.forEach(([rr,cc],i)=>{ grid[rr][cc] = w[i]; });
+      placed.push({ word:w, cells });
+      ok = true;
+    }
+  });
+
+  const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(!grid[r][c]) grid[r][c] = alpha[Math.floor(Math.random()*26)];
+
+  return {
+    words: placed.map(p=>p.word),
+    size,
+    grid: grid.map(row=>row.join("")),
+    placed,
+    found: [],
+    revealed: false
+  };
+}
+
+function linePath(a, b){
+  const dr = b[0]-a[0], dc = b[1]-a[1];
+  const straight = dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc);
+  if(!straight) return null;
+  const steps = Math.max(Math.abs(dr), Math.abs(dc));
+  const sr = Math.sign(dr), sc = Math.sign(dc);
+  const cells = [];
+  for(let i=0;i<=steps;i++) cells.push([a[0]+sr*i, a[1]+sc*i]);
+  return cells;
+}
+
+/* ==================================================================
+   AÇÕES (delegação de eventos)
+   ================================================================== */
+document.addEventListener("click", (ev)=>{
+  const el = ev.target.closest("[data-act]");
+  if(!el) return;
+  const act = el.dataset.act;
+  const handler = ACTIONS[act];
+  if(handler){ ev.preventDefault(); handler(el, ev); }
+});
+
+document.addEventListener("change", (ev)=>{
+  const el = ev.target.closest("[data-act-change]");
+  if(!el) return;
+  const handler = ACTIONS[el.dataset.actChange];
+  if(handler) handler(el, ev);
+});
+
+const ACTIONS = {};
+
+ACTIONS.setTab = (el)=>{ go(el.dataset.tab); };
+
+ACTIONS.practiceSubject = (el)=>{ ui.psub = el.dataset.sid; ui.practice = null; render(); };
+ACTIONS.practiceBack = ()=>{ ui.psub = null; ui.practice = null; render(); };
+
+ACTIONS.openConcurso = (el)=>{ selectConcurso(el.dataset.cid); };
+
+ACTIONS.editProfile = ()=>{ openProfileModal(); };
+
+ACTIONS.backTopic = ()=>{ ui.tab = "subject"; ui.tid = null; render(); };
+
+ACTIONS.endPractice = ()=>{
+  const p = ui.practice;
+  ui.practice = null;
+  if(p && p.tid){ const f = findTopicById(p.tid); if(f){ ui.sid = f.subject.id; ui.tid = f.topic.id; ui.cid = f.concurso.id; } }
+  ui.tab = "topic";
+  render();
+};
+
+/* ---------- concursos ---------- */
+
+/* ==================================================================
+   PLANO DE ESTUDO: horas por dia -> data de término + semáforo
+   ================================================================== */
+function planoEstudo(c){
+  const st = stats(c);
+  const dh = Number(c.dailyHours) || 0;
+  if(!dh) return { set:false, st, dh:0 };
+  if(st.remaining <= 0) return { set:true, done:true, st, dh };
+  const needDays = Math.ceil(st.remaining / (dh * 60));
+  const fim = new Date(); fim.setHours(0,0,0,0); fim.setDate(fim.getDate() + needDays);
+  const fimISO = fim.getFullYear() + "-" + pad(fim.getMonth()+1) + "-" + pad(fim.getDate());
+  let level = "n", margin = null;
+  if(st.days != null && st.days >= 0){
+    margin = st.days - needDays;
+    if(st.days === 0) level = "r";
+    else {
+      const ratio = needDays / st.days;
+      level = ratio <= 0.8 ? "g" : ratio <= 1 ? "y" : "r";
+    }
+  }
+  return { set:true, done:false, st, dh, needDays, fimISO, level, margin };
+}
+function plural(n, um, varios){ return n + " " + (Math.abs(n) === 1 ? um : varios); }
+
+function planoHtml(c){
+  const p = planoEstudo(c);
+  if(!p.set){
+    return `<div class="plan">
+      <div class="plan-t">Quantas horas por dia você vai estudar?</div>
+      <div class="plan-d muted">Defina e eu calculo em que dia você termina e se dá tempo até a prova.</div>
+      <button class="btn sm block" style="margin-top:10px" data-act="setDaily" data-cid="${c.id}">Definir horas por dia</button>
+    </div>`;
+  }
+  const horasTxt = fmtMin(p.dh * 60);
+  if(p.done){
+    return `<div class="plan g">
+      <div class="plan-top"><span class="pill">🟢 Concluído</span></div>
+      <div class="plan-t">Você já cumpriu o tempo necessário de estudos. 🎉</div>
+      <button class="btn xs" style="margin-top:10px" data-act="setDaily" data-cid="${c.id}">Alterar horas por dia</button>
+    </div>`;
+  }
+  const fimBR = dateBR(p.fimISO);
+  let pill = "Defina a data da prova", detalhe = "Cadastre a data da prova para ver se o prazo está confortável.";
+  if(p.level === "g"){
+    pill = "🟢 Tempo de sobra";
+    detalhe = "Você termina " + plural(p.margin, "dia", "dias") + " antes da prova. Siga no ritmo.";
+  } else if(p.level === "y"){
+    pill = "🟡 Sobra pouco tempo";
+    detalhe = p.margin > 0
+      ? "Você termina só " + plural(p.margin, "dia", "dias") + " antes da prova. Não perca nenhum dia de estudo."
+      : "Você termina no dia da prova. Não pode faltar nenhum dia.";
+  } else if(p.level === "r"){
+    pill = "🔴 Tempo curto";
+    detalhe = "Nesse ritmo você termina " + (p.margin < 0 ? plural(-p.margin, "dia", "dias") + " depois da prova" : "só no dia da prova")
+      + ". Para dar tempo, estude pelo menos <b>" + fmtMin(p.st.perDay) + " por dia</b>.";
+  }
+  return `<div class="plan ${p.level === "n" ? "" : p.level}">
+    <div class="plan-top"><span class="pill">${pill}</span></div>
+    <div class="plan-t">Você irá estudar <b>${horasTxt} por dia</b></div>
+    <div class="plan-d">Terminando em <b>${fimBR}</b> (${plural(p.needDays, "dia", "dias")}).</div>
+    <div class="plan-d muted">${detalhe}</div>
+    <button class="btn xs" style="margin-top:10px" data-act="setDaily" data-cid="${c.id}">Alterar horas por dia</button>
+  </div>`;
+}
+
+ACTIONS.setDaily = (el)=>{
+  const c = db.concursos.find(x=>x.id === (el.dataset.cid || ui.cid)) || concursoAtual();
+  if(!c) return toast("Crie um concurso primeiro");
+  showModal("Horas de estudo por dia", `
+    <div class="field">
+      <label for="dhIn">Quantas horas por dia você vai estudar?</label>
+      <input id="dhIn" name="dailyHours" class="input" type="number" inputmode="decimal" min="0.25" max="24" step="0.25" value="${Number(c.dailyHours)||""}" placeholder="Ex: 2 ou 1.5">
+      <div class="hint">Pode usar meia hora (1.5 = 1h30). Esse valor aparece na Agenda e calcula a data em que você termina.</div>
+    </div>
+  `, "Salvar", (vals)=>{
+    const raw = String(vals.dailyHours||"").replace(",", ".").trim();
+    const n = raw === "" ? 0 : Number(raw);
+    if(isNaN(n) || n < 0 || n > 24) return toast("Informe um valor entre 0,25 e 24 horas") || false;
+    c.dailyHours = n;
+    saveDB(); render();
+    toast(n ? "Plano salvo" : "Plano removido");
+    return true;
+  });
+};
+
+ACTIONS.newConcurso = ()=>{
+  const info = `
+    <div class="info-box">
+      <b>Quanto tempo de estudo costuma ser necessário?</b><br>
+      • <b>Baixa Complexidade</b> (nível médio ou concursos municipais menores): 100h a 300h no total.<br>
+      • <b>Média Complexidade</b> (carreiras policiais, tribunais ou administrativos): 500h a 1.000h no total.<br>
+      • <b>Alta Complexidade</b> (área fiscal, de controle ou carreiras jurídicas): 1.200h a 3.000h+ no total (podendo levar de 1 a 3 anos de preparação).
+    </div>`;
+  const preset = (v,label,hrs)=>`<button type="button" class="chip tap" data-act="pickPreset" data-hrs="${hrs}">${label}</button>`;
+
+  showModal("Novo concurso ou prova", `
+    <div class="field">
+      <label for="cName">Nome do concurso / prova</label>
+      <input id="cName" name="name" class="input" type="text" placeholder="Ex: Polícia Militar da Bahia" maxlength="60" required>
+    </div>
+    <div class="field">
+      <label for="cDate">Data da prova</label>
+      <input id="cDate" name="examDate" class="input" type="date">
+      <div class="hint">Na tela inicial vai aparecer “faltam X dias para sua prova”.</div>
+    </div>
+    <div class="field">
+      <label>Complexidade (só para te orientar)</label>
+      <div class="chips">
+        ${preset("baixa","Baixa · 100–300h",200)}
+        ${preset("media","Média · 500–1.000h",750)}
+        ${preset("alta","Alta · 1.200h+",1500)}
+      </div>
+      ${info}
+    </div>
+    <div class="field">
+      <label for="cHours">Quantas horas de estudo até a aprovação?</label>
+      <input id="cHours" name="hoursTarget" class="input" type="number" min="1" max="20000" step="1" placeholder="Ex: 600" required>
+      <div class="hint">Você vai abatendo essas horas em Concurso › Matérias › Conteúdo.</div>
+    </div>
+  `, "Criar concurso", (vals)=>{
+    const name = (vals.name||"").trim();
+    const horas = Number(vals.hoursTarget);
+    if(!name) return toast("Dê um nome ao concurso") || false;
+    if(!horas || horas < 1) return toast("Informe as horas de estudo") || false;
+    const c = {
+      id: uid(),
+      name,
+      examDate: vals.examDate || "",
+      hoursTarget: horas,
+      complexity: "",
+      subjects: [],
+      schedule: emptySchedule(),
+      createdAt: new Date().toISOString()
+    };
+    db.concursos.push(c);
+    db.activeId = c.id;
+    ui.cid = c.id; ui.sid = null; ui.tid = null; ui.tab = "home";
+    saveDB(); render(); toast("Concurso criado!");
+    return true;
+  }, { after: attachPresetListeners });
+};
+
+function attachPresetListeners(){
+  document.querySelectorAll('[data-act="pickPreset"]').forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const inp = document.getElementById("cHours");
+      if(inp){ inp.value = b.dataset.hrs; }
+      document.querySelectorAll('[data-act="pickPreset"]').forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+    });
+  });
+}
+
+ACTIONS.editConcurso = (el)=>{
+  const c = db.concursos.find(x=>x.id === el.dataset.cid);
+  if(!c) return;
+  showModal("Editar concurso", `
+    <div class="field">
+      <label for="eName">Nome</label>
+      <input id="eName" name="name" class="input" type="text" value="${esc(c.name)}" maxlength="60" required>
+    </div>
+    <div class="field">
+      <label for="eDate">Data da prova</label>
+      <input id="eDate" name="examDate" class="input" type="date" value="${esc(c.examDate||"")}">
+    </div>
+    <div class="field">
+      <label for="eHours">Tempo necessário de estudos (horas)</label>
+      <input id="eHours" name="hoursTarget" class="input" type="number" min="1" step="1" value="${Number(c.hoursTarget)||0}" required>
+    </div>
+    <button type="button" class="btn danger block" data-act="delConcurso" data-cid="${c.id}">🗑️ Apagar este concurso</button>
+  `, "Salvar", (vals)=>{
+    c.name = (vals.name||"").trim() || c.name;
+    c.examDate = vals.examDate || "";
+    c.hoursTarget = Math.max(1, Number(vals.hoursTarget)||0);
+    saveDB(); render(); toast("Concurso atualizado");
+    return true;
+  });
+};
+
+ACTIONS.delConcurso = (el)=>{
+  const cid = el.dataset.cid;
+  const c = db.concursos.find(x=>x.id === cid);
+  if(!c) return;
+  closeModal();
+  confirmBox("Apagar concurso?", `“${c.name}” e todas as matérias, conteúdos e horas dele serão apagados.`, ()=>{
+    db.concursos = db.concursos.filter(x=>x.id !== cid);
+    db.log = db.log.filter(l=>l.cid !== cid);
+    if(db.activeId === cid) db.activeId = db.concursos[0] ? db.concursos[0].id : null;
+    ui.cid = db.activeId; ui.sid = null; ui.tid = null; ui.tab = "home";
+    saveDB(); render(); toast("Concurso apagado");
+  });
+};
+
+/* ---------- matérias ---------- */
+ACTIONS.newSubject = (el)=>{
+  const cid = el.dataset.cid || (concursoAtual()||{}).id;
+  const c = db.concursos.find(x=>x.id === cid);
+  if(!c) return toast("Crie um concurso primeiro");
+  const chips = SUBJECT_SUGGESTIONS.map(s=>`<button type="button" class="chip tap" data-act="fillSubject" data-name="${esc(s)}">${esc(s)}</button>`).join("");
+  showModal("Nova matéria", `
+    <div class="field">
+      <label for="sName">Nome da matéria</label>
+      <input id="sName" name="name" class="input" type="text" placeholder="Ex: Informática" maxlength="50" required>
+    </div>
+    <div class="field">
+      <label>Sugestões</label>
+      <div class="chips">${chips}</div>
+    </div>
+  `, "Adicionar", (vals)=>{
+    const name = (vals.name||"").trim();
+    if(!name) return toast("Digite o nome da matéria") || false;
+    if(c.subjects.some(s=>s.name.toLowerCase() === name.toLowerCase())) return toast("Essa matéria já existe") || false;
+    c.subjects.push({
+      id: uid(), name, color: SUBJECT_COLORS[c.subjects.length % SUBJECT_COLORS.length], topics: []
+    });
+    saveDB(); render(); toast("Matéria adicionada");
+    return true;
+  }, { after: ()=>{
+    document.querySelectorAll('[data-act="fillSubject"]').forEach(b=>{
+      b.addEventListener("click", ()=>{ const i = document.getElementById("sName"); if(i) i.value = b.dataset.name; });
+    });
+  }});
+};
+
+ACTIONS.openSubject = (el)=>{ ui.sid = el.dataset.sid; ui.tid = null; ui.tab = "subject"; render(); };
+
+ACTIONS.delSubject = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const sid = el.dataset.sid;
+  const s = c.subjects.find(x=>x.id === sid); if(!s) return;
+  confirmBox("Apagar matéria?", `“${s.name}” e todos os conteúdos dela serão apagados. Isso não devolve as horas já registradas.`, ()=>{
+    c.subjects = c.subjects.filter(x=>x.id !== sid);
+    db.log = db.log.filter(l=>!(l.cid === c.id && l.sid === sid));
+    ui.sid = null; ui.tab = "subjects";
+    saveDB(); render(); toast("Matéria apagada");
+  });
+};
+
+/* ---------- conteúdos ---------- */
+ACTIONS.newTopic = (el)=>{
+  const c = concursoAtual();
+  const s = c && c.subjects.find(x=>x.id === el.dataset.sid);
+  if(!s) return;
+  showModal("Novo conteúdo", `
+    <div class="field">
+      <label for="tName">Nome do conteúdo / aula</label>
+      <input id="tName" name="name" class="input" type="text" placeholder="Ex: MSOffice, Crase, Lei 8.112" maxlength="70" required>
+    </div>
+    <p class="hint">Depois você marca a aula como concluída, dá a dificuldade e registra as horas.</p>
+  `, "Adicionar", (vals)=>{
+    const name = (vals.name||"").trim();
+    if(!name) return toast("Digite o nome") || false;
+    s.topics.push({
+      id: uid(), name, done:false, difficulty:null,
+      definitions: [], cards: [], questions: [], ws: null
+    });
+    saveDB(); render(); toast("Conteúdo adicionado");
+    return true;
+  });
+};
+
+ACTIONS.openTopic = (el)=>{ ui.sid = el.dataset.sid; ui.tid = el.dataset.tid; ui.tab = "topic"; render(); };
+
+ACTIONS.toggleTopic = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const s = c.subjects.find(x=>x.id === el.dataset.sid); if(!s) return;
+  const t = s.topics.find(x=>x.id === el.dataset.tid); if(!t) return;
+  t.done = !t.done;
+  saveDB(); render();
+};
+
+ACTIONS.setDiff = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const s = c.subjects.find(x=>x.id === el.dataset.sid); if(!s) return;
+  const t = s.topics.find(x=>x.id === el.dataset.tid); if(!t) return;
+  const v = Number(el.dataset.v);
+  t.difficulty = (Number(t.difficulty) === v && (t.difficulty===0||t.difficulty)) ? null : v;
+  saveDB(); render();
+};
+
+ACTIONS.delTopic = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const s = c.subjects.find(x=>x.id === el.dataset.sid); if(!s) return;
+  const t = s.topics.find(x=>x.id === el.dataset.tid); if(!t) return;
+  confirmBox("Apagar conteúdo?", `“${t.name}” e as definições/cards/caça-palavras dele serão apagados.`, ()=>{
+    s.topics = s.topics.filter(x=>x.id !== t.id);
+    db.log = db.log.filter(l=>!(l.cid === c.id && l.tid === t.id));
+    ui.tid = null; ui.tab = "subject";
+    saveDB(); render(); toast("Conteúdo apagado");
+  });
+};
+
+/* ---------- renomear matéria / conteúdo ---------- */
+ACTIONS.renameSubject = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const sid = el.dataset.sid || ui.sid;
+  const sub = c.subjects.find(x=>x.id === sid); if(!sub) return;
+  showModal("Editar nome da matéria", `
+    <div class="field">
+      <label for="sName">Nome da matéria</label>
+      <input id="sName" name="name" class="input" type="text" value="${esc(sub.name)}" maxlength="50" required>
+    </div>
+    <p class="hint">Só o nome muda. Conteúdos, horas e práticas continuam iguais.</p>
+  `, "Salvar", (vals)=>{
+    const name = (vals.name||"").trim();
+    if(!name) return toast("Digite o nome") || false;
+    sub.name = name;
+    saveDB(); render();
+    toast("Matéria renomeada");
+  });
+};
+
+ACTIONS.renameTopic = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const sid = el.dataset.sid || ui.sid;
+  const tid = el.dataset.tid || ui.tid;
+  const sub = c.subjects.find(x=>x.id === sid);
+  const top = sub && sub.topics.find(x=>x.id === tid);
+  if(!sub || !top) return;
+  showModal("Editar nome do conteúdo", `
+    <div class="field">
+      <label for="tName">Nome do conteúdo / aula</label>
+      <input id="tName" name="name" class="input" type="text" value="${esc(top.name)}" maxlength="70" required>
+    </div>
+    <p class="hint">Só o nome muda. Aula, dificuldade, horas e práticas continuam iguais.</p>
+  `, "Salvar", (vals)=>{
+    const name = (vals.name||"").trim();
+    if(!name) return toast("Digite o nome") || false;
+    top.name = name;
+    saveDB(); render();
+    toast("Conteúdo renomeado");
+  });
+};
+
+/* ---------- horas ---------- */
+function openHoursModal(c, opts){
+  opts = opts || {};
+  const sid = opts.sid || null;
+  const tid = opts.tid || null;
+  const s = sid ? c.subjects.find(x=>x.id === sid) : null;
+  const t = (s && tid) ? s.topics.find(x=>x.id === tid) : null;
+  const where = opts.where || (t ? t.name : (s ? s.name : c.name));
+  const pre = Number(opts.minutes) || 0;
+  const preH = pre ? Math.floor(pre/60) : "";
+  const preM = pre ? (pre % 60 || "") : "";
+
+  showModal("Registrar horas estudadas", `
+    <p class="small muted" style="margin-bottom:12px">Lançando em <b style="color:var(--txt)">${esc(where)}</b> · ${esc(c.name)}</p>
+    <div class="two">
+      <div class="field">
+        <label for="hHours">Horas</label>
+        <input id="hHours" name="hours" class="input" type="number" min="0" max="24" step="1" placeholder="0" inputmode="numeric" value="${preH}">
+      </div>
+      <div class="field">
+        <label for="hMins">Minutos</label>
+        <input id="hMins" name="mins" class="input" type="number" min="0" max="59" step="5" placeholder="0" inputmode="numeric" value="${preM}">
+      </div>
+    </div>
+    <div class="field">
+      <label>Atalhos</label>
+      <div class="chips">
+        <button type="button" class="chip tap" data-act="quickMin" data-min="30">30min</button>
+        <button type="button" class="chip tap" data-act="quickMin" data-min="45">45min</button>
+        <button type="button" class="chip tap" data-act="quickMin" data-min="60">1h</button>
+        <button type="button" class="chip tap" data-act="quickMin" data-min="120">2h</button>
+        <button type="button" class="chip tap" data-act="quickMin" data-min="180">3h</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="hDate">Dia</label>
+      <input id="hDate" name="date" class="input" type="date" value="${todayISO()}" max="${todayISO()}">
+    </div>
+    <div class="field">
+      <label for="hNote">Anotação (opcional)</label>
+      <input id="hNote" name="note" class="input" type="text" placeholder="Ex: resumo + 20 questões" maxlength="80" value="${esc(opts.note||"")}">
+    </div>
+  `, "Salvar horas", (vals)=>{
+    const mins = (Number(vals.hours)||0)*60 + (Number(vals.mins)||0);
+    if(mins <= 0) return toast("Informe as horas ou os minutos") || false;
+    if(mins > 24*60) return toast("Máximo de 24h por lançamento") || false;
+    db.log.push({
+      id: uid(), cid: c.id, sid, tid,
+      minutes: mins, date: vals.date || todayISO(), note: (vals.note||"").trim()
+    });
+    saveDB(); render();
+    toast("+" + fmtMin(mins) + " registradas");
+    return true;
+  }, { after: ()=>{
+    document.querySelectorAll('[data-act="quickMin"]').forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const m = Number(b.dataset.min);
+        document.getElementById("hHours").value = Math.floor(m/60) || "";
+        document.getElementById("hMins").value = m%60 || "";
+        document.querySelectorAll('[data-act="quickMin"]').forEach(x=>x.classList.remove("on"));
+        b.classList.add("on");
+      });
+    });
+  }});
+}
+
+ACTIONS.openHours = (el)=>{
+  const c = db.concursos.find(x=>x.id === (el.dataset.cid || (concursoAtual()||{}).id));
+  if(!c) return toast("Crie um concurso primeiro");
+  openHoursModal(c, {
+    sid: el.dataset.sid || null,
+    tid: el.dataset.tid || null,
+    minutes: Number(el.dataset.min) || 0
+  });
+};
+
+
+/* ---------- agenda: dias, blocos e importação ---------- */
+ACTIONS.setDay = (el)=>{ ui.day = Number(el.dataset.day); render(); };
+
+function blockModal(c, dayN, blk){
+  const d = Number(dayN);
+  const sugestoes = c.subjects.map(x=>`<option value="${esc(x.name)}"></option>`).join("");
+  showModal((blk ? "Editar bloco" : "Novo bloco") + " · " + dayName(d), `
+    <div class="field">
+      <label for="blDisc">Matéria / disciplina</label>
+      <input id="blDisc" name="disciplina" class="input" list="subjList" maxlength="60"
+        value="${esc(blk ? blk.disciplina : "")}" placeholder="Ex: Língua Portuguesa">
+      <datalist id="subjList">${sugestoes}</datalist>
+    </div>
+    <div class="two">
+      <div class="field">
+        <label for="blHor">Horário</label>
+        <input id="blHor" name="horario" class="input" maxlength="20"
+          value="${esc(blk ? blk.horario : "")}" placeholder="19:00 - 20:00">
+      </div>
+      <div class="field">
+        <label for="blMin">Duração (min)</label>
+        <input id="blMin" name="minutos" class="input" type="number" min="0" max="600" step="5"
+          value="${blk && blk.minutos ? blk.minutos : ""}" placeholder="60">
+      </div>
+    </div>
+    <div class="field">
+      <label for="blFoco">Foco do estudo</label>
+      <textarea id="blFoco" name="foco" class="input" style="min-height:66px" maxlength="300"
+        placeholder="Ex: Crase, pontuação e concordância">${esc(blk ? blk.foco : "")}</textarea>
+    </div>
+    <div class="field">
+      <label for="blMet">Metodologia</label>
+      <input id="blMet" name="metodologia" class="input" maxlength="120"
+        value="${esc(blk ? blk.metodologia : "")}" placeholder="Ex: 40 min teoria + 20 min questões">
+    </div>
+    ${blk ? `<button type="button" class="btn danger block" data-act="delBlock" data-day="${d}" data-bid="${blk.id}">🗑️ Apagar bloco</button>` : ""}
+  `, blk ? "Salvar" : "Adicionar", (vals)=>{
+    const disc = (vals.disciplina || "").trim();
+    const horario = (vals.horario || "").trim();
+    const minutos = Number(vals.minutos) || minutosDoHorario(horario);
+    if(!disc && !horario) return toast("Diga ao menos a matéria ou o horário") || false;
+    const dia = diaDaSemana(c, d);
+    if(blk){
+      blk.disciplina = disc; blk.horario = horario; blk.minutos = minutos;
+      blk.foco = (vals.foco || "").trim(); blk.metodologia = (vals.metodologia || "").trim();
+    }else{
+      dia.blocks.push({
+        id: uid(), disciplina: disc, horario, minutos,
+        foco: (vals.foco || "").trim(), metodologia: (vals.metodologia || "").trim()
+      });
+    }
+    dia.blocks.sort((a,b)=> String(a.horario||"").localeCompare(String(b.horario||"")));
+    saveDB(); render(); toast(blk ? "Bloco atualizado" : "Bloco adicionado");
+    return true;
+  });
+}
+
+ACTIONS.newBlock = (el)=>{
+  const c = concursoAtual(); if(!c) return toast("Crie um concurso primeiro");
+  const d = (el.dataset.day !== undefined && el.dataset.day !== "") ? Number(el.dataset.day) : (ui.day == null ? new Date().getDay() : ui.day);
+  blockModal(c, d, null);
+};
+
+ACTIONS.editBlock = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const achado = findBlock(c, el.dataset.bid); if(!achado) return;
+  blockModal(c, el.dataset.day !== undefined ? Number(el.dataset.day) : achado.dia.dia, achado.block);
+};
+
+ACTIONS.delBlock = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const d = Number(el.dataset.day);
+  closeModal();
+  confirmBox("Apagar bloco?", "O horário sai da agenda (as horas já registradas continuam).", ()=>{
+    const dia = diaDaSemana(c, d);
+    dia.blocks = dia.blocks.filter(b=>b.id !== el.dataset.bid);
+    saveDB(); render(); toast("Bloco apagado");
+  });
+};
+
+ACTIONS.blockHours = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const achado = findBlock(c, el.dataset.bid); if(!achado) return;
+  openHoursModal(c, {
+    sid: el.dataset.sid || null,
+    minutes: Number(el.dataset.min) || Number(achado.block.minutos) || 0,
+    where: achado.block.disciplina || dayName(achado.dia.dia),
+    note: achado.block.foco ? achado.block.foco.slice(0,80) : ""
+  });
+};
+
+/* lê o JSON do cronograma (formato do exemplo) */
+function parseSchedule(raw){
+  const j = JSON.parse(raw);
+  const cron = Array.isArray(j) ? j
+    : (j.cronograma_semanal || j.cronograma || j.schedule || j.dias || null);
+  if(!Array.isArray(cron) || !cron.length) throw new Error("sem cronograma_semanal");
+
+  const days = DAYS.map(d=>({ dia:d.n, cargaHoras:0, observacao:"", blocks:[] }));
+  const disciplinas = new Set();
+
+  cron.forEach(item=>{
+    if(!item || typeof item !== "object") return;
+    const n = dayFromText(item.dia || item.day || item.dia_semana || "");
+    if(n === null) return;
+    const alvo = days.find(d=>d.dia === n);
+    alvo.cargaHoras = Number(item.carga_horas != null ? item.carga_horas : item.horas) || 0;
+    alvo.observacao = item.observacao || item.obs || "";
+    const blocos = item.blocos || item.blocks || [];
+    (Array.isArray(blocos) ? blocos : []).forEach(b=>{
+      if(!b || typeof b !== "object") return;
+      const horario = b.horario || [b.inicio, b.fim].filter(Boolean).join(" - ");
+      const minutos = Number(b.duracao_minutos != null ? b.duracao_minutos : b.minutos) || minutosDoHorario(horario);
+      const disc = b.disciplina || b.materia || b.matéria || "";
+      if(disc) disciplinas.add(String(disc).trim());
+      alvo.blocks.push({
+        id: uid(),
+        horario: String(horario || "").trim(),
+        minutos,
+        disciplina: String(disc).trim(),
+        foco: String(b.foco || "").trim(),
+        metodologia: String(b.metodologia || "").trim()
+      });
+    });
+    alvo.blocks.sort((a,b)=> String(a.horario||"").localeCompare(String(b.horario||"")));
+  });
+
+  return {
+    days,
+    disciplinas: Array.from(disciplinas),
+    meta: {
+      concurso: j.concurso || "",
+      carga: j.carga_horaria_semanal || null,
+      dist: j.distribuicao_questoes || null
+    }
+  };
+}
+
+ACTIONS.importSchedule = ()=>{
+  const c = concursoAtual();
+  if(!c) return toast("Crie um concurso primeiro");
+  showModal("Importar cronograma (JSON)", `
+    <p class="small muted" style="margin-bottom:10px">Cole o JSON do seu plano de estudos ou escolha o arquivo .json. Isso vira uma <b style="color:var(--txt)">anotação no calendário</b> de ${esc(c.name)} — não cria matérias.</p>
+    <div class="field">
+      <label for="impJson">JSON do cronograma</label>
+      <textarea id="impJson" name="json" class="input" style="min-height:140px;font-size:12px" placeholder='{"cronograma_semanal":[{"dia":"Segunda-feira","blocos":[...]}]}'></textarea>
+      <div class="hint">Aceita o formato completo (com <b>carga_horaria_semanal</b>, <b>distribuicao_questoes</b> e <b>cronograma_semanal</b>) ou só a lista de dias.</div>
+      <button type="button" class="btn sm ghost block" style="margin-top:8px" data-act="exemploCronograma">ℹ️ Ver exemplo de JSON</button>
+    </div>
+    <div class="field">
+      <label for="impFile">ou escolha o arquivo</label>
+      <input id="impFile" type="file" accept=".json,application/json" class="input imp-file">
+    </div>
+  `, "Importar", (vals)=>{
+    const raw = String(vals.json || "").trim();
+    if(!raw) return toast("Cole o JSON ou escolha um arquivo") || false;
+    let parsed;
+    try{ parsed = parseSchedule(raw); }
+    catch(e){ return toast("JSON fora do padrão. Confira o exemplo.") || false; }
+    const total = parsed.days.reduce((a,d)=>a+d.blocks.length, 0);
+    if(!total && !parsed.days.some(d=>d.observacao)) return toast("Não achei nenhum bloco no arquivo") || false;
+
+    c.schedule = { days: parsed.days, meta: parsed.meta, importedAt: new Date().toISOString() };
+    ui.day = new Date().getDay();
+    saveDB(); render();
+    toast("Anotação salva: " + total + " bloco" + (total===1?"":"s") + " na agenda");
+    return true;
+  }, { after: ()=>{
+    const inp = document.getElementById("impFile");
+    const ta = document.getElementById("impJson");
+    if(inp) inp.addEventListener("change", ()=>{
+      const f = inp.files && inp.files[0];
+      if(!f) return;
+      const r = new FileReader();
+      r.onload = ()=>{
+        if(ta) ta.value = String(r.result);
+        toast("Arquivo carregado. Toque em Importar.");
+      };
+      r.readAsText(f);
+    });
+  }});
+};
+
+/* exemplo escrito de cronograma (usado no botão informativo) */
+const EXEMPLO_CRONOGRAMA = `{
+  "concurso": "TJSP - Escrevente Técnico Judiciário",
+  "carga_horaria_semanal": {
+    "horas_liquidas": 19,
+    "dias_uteis": "3h por dia (19:00 às 22:15 com pausas)",
+    "sabado_e_feriados": "4h (divididas em 3 blocos)",
+    "domingo": "Descanso"
+  },
+  "distribuicao_questoes": {
+    "total": 66,
+    "blocos": [
+      { "bloco": "Bloco I", "disciplina": "Língua Portuguesa", "questoes": 16 },
+      { "bloco": "Bloco II", "disciplina": "Conhecimentos em Direito", "questoes": 30,
+        "subdisciplinas": ["Direito Penal", "Direito Constitucional"] }
+    ]
+  },
+  "cronograma_semanal": [
+    {
+      "dia": "Segunda-feira",
+      "carga_horas": 3,
+      "blocos": [
+        {
+          "horario": "19:00 - 20:00",
+          "duracao_minutos": 60,
+          "disciplina": "Língua Portuguesa",
+          "foco": "Gramática e interpretação de textos",
+          "metodologia": "40 min teoria + 20 min questões"
+        },
+        {
+          "horario": "20:10 - 21:10",
+          "duracao_minutos": 60,
+          "disciplina": "Direito Constitucional",
+          "foco": "CF/88 - Título II",
+          "metodologia": "40 min lei seca + 20 min questões"
+        }
+      ]
+    },
+    {
+      "dia": "Sábado / Feriados",
+      "carga_horas": 4,
+      "blocos": [
+        {
+          "horario": "09:00 - 11:00",
+          "duracao_minutos": 120,
+          "disciplina": "Simulado Geral",
+          "foco": "50 questões estilo banca",
+          "metodologia": "Simulado"
+        }
+      ]
+    },
+    {
+      "dia": "Domingo",
+      "carga_horas": 0,
+      "blocos": [],
+      "observacao": "Descanso total"
+    }
+  ]
+}`;
+
+ACTIONS.exemploCronograma = ()=>{
+  exemploBox("Exemplo de cronograma (JSON)",
+    EXEMPLO_CRONOGRAMA,
+    "Use esse JSON como base: troque os dias, horários e disciplinas pelos seus. " +
+    "<b style='color:var(--txt)'>O que importa é o campo <b>cronograma_semanal</b></b> (dia, carga_horas e blocos com horario, duracao_minutos, disciplina, foco e metodologia). " +
+    "Os campos <b>carga_horaria_semanal</b> e <b>distribuicao_questoes</b> são opcionais e só aparecem como resumo. Nada disso vira matéria: fica só como anotação na Agenda.");
+};
+
+ACTIONS.clearSchedule = ()=>{
+  const c = concursoAtual(); if(!c) return;
+  confirmBox("Limpar o calendário?", "Todos os blocos e a carga horária importada deste concurso serão apagados. As horas já registradas continuam.", ()=>{
+    c.schedule = emptySchedule();
+    saveDB(); render(); toast("Calendário limpo");
+  });
+};
+
+/* ---------- definições ---------- */
+ACTIONS.newDef = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  showModal("Nova definição", `
+    <div class="field">
+      <label for="dTerm">Pergunta / termo</label>
+      <div class="row">
+        <input id="dTerm" name="term" class="input" type="text" placeholder="Ex: O que é o Excel?" maxlength="120" required>
+        <button type="button" class="icon-btn" data-act="dictate" data-target="dTerm" title="Falar">🎤</button>
+      </div>
+      <div class="hint">Exemplo: “O que é o Excel?” · você também pode falar em voz alta.</div>
+    </div>
+    <div class="field">
+      <label for="dDef">Definição / resposta</label>
+      <div class="row">
+        <textarea id="dDef" name="def" class="input" placeholder="Ex: É um programa de planilhas da Microsoft..." maxlength="800" required></textarea>
+        <button type="button" class="icon-btn" data-act="dictate" data-target="dDef" title="Falar">🎤</button>
+      </div>
+    </div>
+  `, "Salvar definição", (vals)=>{
+    const term = (vals.term||"").trim(), def = (vals.def||"").trim();
+    if(!term || !def) return toast("Preencha pergunta e definição") || false;
+    t.definitions.push({ id: uid(), term, def });
+    saveDB(); render(); toast("Definição criada");
+    return true;
+  });
+};
+
+ACTIONS.delDef = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  t.definitions = t.definitions.filter(d=>d.id !== el.dataset.id);
+  saveDB(); render();
+};
+
+/* ---------- cards ---------- */
+ACTIONS.newCard = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  showModal("Novo card", `
+    <div class="field">
+      <label for="kFront">Frente (a pergunta)</label>
+      <input id="kFront" name="front" class="input" type="text" placeholder="Ex: O que foi a Era Vargas?" maxlength="120" required>
+    </div>
+    <div class="field">
+      <label for="kBack">Verso (a resposta)</label>
+      <textarea id="kBack" name="back" class="input" placeholder="Ex: Período de 1930 a 1945..." maxlength="800" required></textarea>
+    </div>
+  `, "Salvar card", (vals)=>{
+    const front = (vals.front||"").trim(), back = (vals.back||"").trim();
+    if(!front || !back) return toast("Preencha os dois lados") || false;
+    t.cards.push({ id: uid(), front, back });
+    saveDB(); render(); toast("Card criado");
+    return true;
+  });
+};
+
+ACTIONS.delCard = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  t.cards = t.cards.filter(d=>d.id !== el.dataset.id);
+  saveDB(); render();
+};
+
+
+/* ==================================================================
+   QUESTÕES (pergunta + alternativas)
+   ================================================================== */
+function questionModal(t, q){
+  const opts = q ? q.options : [];
+  const linhas = [0,1,2,3,4].map(i=>{
+    const marcado = (q ? Number(q.correct) === i : i === 0) ? "checked" : "";
+    const valor = opts[i] ? esc(opts[i]) : "";
+    return `<div class="row" style="gap:8px;align-items:center;margin-top:8px">
+      <input type="radio" name="correct" value="${i}" id="qc${i}" class="rad" title="Marcar como correta" ${marcado}>
+      <input id="qo${i}" name="o${i}" class="input" type="text" maxlength="200"
+        placeholder="Alternativa ${LETRAS[i]}" value="${valor}">
+    </div>`;
+  }).join("");
+
+  showModal(q ? "Editar questão" : "Nova questão", `
+    <div class="field">
+      <label for="qText">Questão <span class="tiny">(múltipla escolha · 1 correta)</span></label>
+      <div class="row">
+        <textarea id="qText" name="text" class="input" style="min-height:70px" maxlength="600" placeholder="Ex: O que é a crase?" required>${esc(q ? q.text : "")}</textarea>
+        <button type="button" class="icon-btn" data-act="dictate" data-target="qText" title="Falar">🎤</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Alternativas <span class="tiny">(marque a bolinha da correta)</span></label>
+      ${linhas}
+      <div class="hint">Preencha as 5 alternativas (A a E) e marque a bolinha da correta. Se quiser menos, deixe as últimas em branco (mínimo 2).</div>
+    </div>
+    <div class="field">
+      <label for="qComment">Comentário (opcional)</label>
+      <input id="qComment" name="comment" class="input" type="text" maxlength="300" placeholder="Ex: Crase é a fusão de duas vogais iguais" value="${esc(q ? q.comment : "")}">
+    </div>
+  `, "Salvar questão", (vals)=>{
+    const text = (vals.text || "").trim();
+    if(!text) return toast("Escreva a questão") || false;
+    const preenchidas = [0,1,2,3,4]
+      .map(i=>({ i, txt: String(vals["o"+i] || "").trim() }))
+      .filter(o=>o.txt);
+    if(preenchidas.length < 2) return toast("Escreva pelo menos 2 alternativas") || false;
+    const marcada = Number(vals.correct);
+    if(!preenchidas.some(o=>o.i === marcada)) return toast("Marque a alternativa correta") || false;
+    const options = preenchidas.map(o=>o.txt);
+    const correct = preenchidas.findIndex(o=>o.i === marcada);
+    const comment = (vals.comment || "").trim();
+    if(q){
+      q.text = text; q.options = options; q.correct = correct; q.comment = comment;
+    }else{
+      t.questions.push({ id: uid(), text, options, correct, comment });
+    }
+    saveDB(); render(); toast(q ? "Questão atualizada" : "Questão criada");
+    return true;
+  });
+}
+
+ACTIONS.newQuestion = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  t.questions = t.questions || [];
+  questionModal(t, null);
+};
+
+ACTIONS.editQuestion = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  const q = (t.questions||[]).find(x=>x.id === el.dataset.qid); if(!q) return;
+  questionModal(t, q);
+};
+
+/* lê o JSON de questões (formato: { titulo, questoes:[{pergunta, opcoes, correta, explicacao}] }) */
+function parseQuestions(raw){
+  const txt = String(raw || "").trim();
+  if(!txt) return { erro:"vazio" };
+  let j;
+  try{ j = JSON.parse(txt); }catch(e){ return { erro:"json" }; }
+  const lista = Array.isArray(j) ? j
+    : (j.questoes || j.questions || j.perguntas || j.itens || j.lista || null);
+  if(!Array.isArray(lista)) return { erro:"estrutura" };
+
+  const itens = [];
+  lista.forEach(x=>{
+    if(!x || typeof x !== "object") return;
+    const text = String(x.pergunta || x.questao || x.question || x.enunciado || x.text || "").trim();
+    const ops = x.opcoes || x.opções || x.alternativas || x.options || x.respostas || [];
+    const options = (Array.isArray(ops) ? ops : [])
+      .map(o=> typeof o === "string" ? o.trim() : String((o && (o.texto || o.text || o.nome)) || "").trim())
+      .filter(Boolean);
+    if(!text || options.length < 2) return;
+
+    let corr = (x.correta !== undefined) ? x.correta
+             : (x.correct !== undefined) ? x.correct
+             : (x.gabarito !== undefined) ? x.gabarito
+             : x.resposta;
+    let idx = null;
+    if(typeof corr === "number" && isFinite(corr)) idx = Math.trunc(corr);
+    else if(typeof corr === "string"){
+      const t = corr.trim();
+      if(/^[A-Fa-f]$/.test(t)) idx = "ABCDEF".indexOf(t.toUpperCase());
+      else if(t !== "" && !isNaN(Number(t))) idx = Number(t);
+      else {
+        const pos = options.findIndex(o=>norm(o) === norm(t));
+        if(pos >= 0) idx = pos;
+      }
+    }
+    if(idx === null) idx = 0;
+    /* aceita índice começando em 1 quando o número estoura a lista */
+    if(idx >= options.length && idx - 1 >= 0 && idx - 1 < options.length) idx = idx - 1;
+    if(idx < 0 || idx >= options.length) idx = 0;
+
+    const comment = String(x.explicacao || x.explicação || x.explicacao || x.comentario ||
+      x.comment || x.justificativa || "").trim();
+    itens.push({ text, options, correct: idx, comment });
+  });
+  return { itens };
+}
+
+const EXEMPLO_QUESTOES = `{
+  "_comentario": "USE ESSE JSON COMO BASE E PEÇA A UMA INTELIGÊNCIA ARTIFICIAL PARA CRIAR MAIS QUESTÕES SOBRE ESSE CONTEÚDO ESPECÍFICO!",
+  "titulo": "Conhecimentos bíblicos",
+  "questoes": [
+    {
+      "pergunta": "Quem construiu a arca?",
+      "opcoes": [
+        "Moisés",
+        "Noé",
+        "Abraão",
+        "Davi",
+        "Salomão"
+      ],
+      "correta": 1,
+      "explicacao": "Noé construiu a arca conforme a orientação de Deus. (Gênesis 6)"
+    },
+    {
+      "pergunta": "Quem derrotou Golias?",
+      "opcoes": [
+        "Saul",
+        "Samuel",
+        "Davi",
+        "Jônatas",
+        "Salomão"
+      ],
+      "correta": 2,
+      "explicacao": "Davi derrotou Golias com uma pedra e uma funda."
+    }
+  ]
+}`;
+
+ACTIONS.exemploQuestoes = ()=>{
+  exemploBox("Exemplo de questões (JSON)", EXEMPLO_QUESTOES,
+    "<b style='color:var(--txt)'>Use esse JSON como base e peça a uma inteligência artificial para criar mais questões sobre esse conteúdo específico!</b> " +
+    "O campo <b>correta</b> é a posição da resposta certa, começando em <b>0</b> (0 = primeira opção, 1 = segunda…). " +
+    "Aceita de 2 a 5 opções por questão; <b>explicacao</b> é opcional.");
+};
+
+ACTIONS.importQuestions = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic;
+  if(!t) return;
+  t.questions = t.questions || [];
+  showModal("Importar questões (JSON)", `
+    <p class="small muted" style="margin-bottom:10px">Cole o JSON das questões ou escolha o arquivo .json. Elas entram no conteúdo <b style="color:var(--txt)">${esc(t.name)}</b>.</p>
+    <div class="field">
+      <label for="impQs">JSON das questões</label>
+      <textarea id="impQs" name="json" class="input" style="min-height:140px;font-size:12px" placeholder='{"titulo":"...","questoes":[{"pergunta":"...","opcoes":["A","B","C","D","E"],"correta":1,"explicacao":"..."}]}'></textarea>
+      <div class="hint">Aceita <b>{ "questoes": [...] }</b> ou uma lista <b>[...]</b>. Campos: pergunta, opcoes, correta, explicacao.</div>
+      <button type="button" class="btn sm ghost block" style="margin-top:8px" data-act="exemploQuestoes">ℹ️ Ver exemplo de JSON</button>
+    </div>
+    <div class="field">
+      <label for="impQsFile">ou escolha o arquivo</label>
+      <input id="impQsFile" type="file" accept=".json,application/json" class="input imp-file">
+    </div>
+  `, "Importar", (vals)=>{
+    const res = parseQuestions(vals.json);
+    if(res.erro === "json") return toast("JSON inválido. Confira o exemplo.") || false;
+    if(res.erro === "estrutura") return toast("Não achei o campo 'questoes' no JSON") || false;
+    if(!res.itens.length) return toast("Nenhuma questão válida (precisa de pergunta e 2+ opções)") || false;
+    let novas = 0, repetidas = 0;
+    res.itens.forEach(q=>{
+      if(t.questions.some(x=>norm(x.text) === norm(q.text))){ repetidas++; return; }
+      t.questions.push({ id: uid(), text:q.text, options:q.options, correct:q.correct, comment:q.comment });
+      novas++;
+    });
+    saveDB(); render();
+    if(!novas) toast("Essas questões já estão aqui");
+    else toast(novas + (novas===1 ? " questão importada" : " questões importadas") +
+      (repetidas ? " · " + repetidas + " já existia(m)" : ""));
+    return true;
+  }, { after: ()=>{
+    const inp = document.getElementById("impQsFile");
+    const ta = document.getElementById("impQs");
+    if(inp) inp.addEventListener("change", ()=>{
+      const f = inp.files && inp.files[0];
+      if(!f) return;
+      const r = new FileReader();
+      r.onload = ()=>{ if(ta) ta.value = String(r.result); toast("Arquivo carregado. Toque em Importar."); };
+      r.readAsText(f);
+    });
+  }});
+};
+
+ACTIONS.delQuestion = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  t.questions = (t.questions||[]).filter(x=>x.id !== el.dataset.qid);
+  saveDB(); render(); toast("Questão apagada");
+};
+
+ACTIONS.answerQuestion = (el)=>{
+  const p = ui.practice; if(!p) return;
+  if(p.answered !== null && p.answered !== undefined) return;
+  const t = findTopicById(p.tid)?.topic; if(!t) return;
+  const q = t.questions[Math.min(p.index, t.questions.length-1)];
+  if(!q) return;
+  p.answered = Number(el.dataset.i);
+  if(Number(p.answered) === Number(q.correct)) p.hits++; else p.misses++;
+  render();
+};
+
+ACTIONS.nextQuestion = ()=>{
+  const p = ui.practice; if(!p) return;
+  const t = findTopicById(p.tid)?.topic;
+  const total = t ? (t.questions||[]).length : 1;
+  if(p.index + 1 >= total){ p.summary = true; }
+  else { p.index++; p.answered = null; }
+  render();
+};
+
+ACTIONS.againQuiz = ()=>{
+  const p = ui.practice; if(!p) return;
+  p.index = 0; p.answered = null; p.hits = 0; p.misses = 0; p.summary = false;
+  render();
+};
+
+/* ==================================================================
+   IMPORTAR MATÉRIAS / CONTEÚDOS
+   ================================================================== */
+/* aceita lista em JSON ou texto separado por vírgula / linha */
+function parseNameList(raw){
+  const txt = String(raw || "").trim();
+  if(!txt) return { itens:[], tipo:"vazio" };
+  const comecaJSON = txt[0] === "[" || txt[0] === "{";
+  if(comecaJSON){
+    let j;
+    try{ j = JSON.parse(txt); }catch(e){ return { erro:"json" }; }
+    let lista = Array.isArray(j) ? j : null;
+    if(!lista && j && typeof j === "object"){
+      lista = j.materias || j.matérias || j.subjects || j.conteudos || j.conteúdos ||
+              j.topics || j.itens || j.items || j.lista || null;
+    }
+    if(!Array.isArray(lista)) return { erro:"json" };
+    const itens = lista.map(x=>{
+      if(typeof x === "string") return { nome:x.trim(), conteudos:[], dificuldade:null, feito:false };
+      if(x && typeof x === "object"){
+        const nome = x.nome || x.name || x.materia || x.matéria || x.disciplina || x.titulo || x.title || "";
+        const filhos = x.conteudos || x.conteúdos || x.topics || x.assuntos || x.itens || [];
+        const dif = (x.dificuldade !== undefined) ? x.dificuldade : x.difficulty;
+        return {
+          nome: String(nome).trim(),
+          conteudos: Array.isArray(filhos)
+            ? filhos.map(y=> typeof y === "string" ? y.trim() : String((y && (y.nome || y.name || y.titulo || y.title)) || "").trim()).filter(Boolean)
+            : [],
+          dificuldade: (dif === 0 || dif) && [0,3,4,5].includes(Number(dif)) ? Number(dif) : null,
+          feito: !!x.feito || !!x.done
+        };
+      }
+      return null;
+    }).filter(x=>x && x.nome);
+    return { itens, tipo:"json" };
+  }
+  const partes = txt.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);
+  return { itens: partes.map(n=>({ nome:n, conteudos:[], dificuldade:null, feito:false })), tipo:"texto" };
+}
+
+const IMP_EXEMPLO_MATERIAS = '[\n  { "nome": "Língua Portuguesa", "conteudos": ["Crase", "Concordância"] },\n  { "nome": "Informática", "conteudos": ["MS-Word", "MS-Excel"] },\n  "Direito Constitucional"\n]\n\nou simplesmente:\nLíngua Portuguesa, Informática, Direito Constitucional';
+const IMP_EXEMPLO_CONTEUDOS = '["Crase", "Concordância verbal", "Pontuação"]\n\nou simplesmente:\nCrase, Concordância verbal, Pontuação';
+
+function importModal(opts){
+  const { titulo, alvo, exemplo, aviso } = opts;
+  showModal(titulo, `
+    <p class="small muted" style="margin-bottom:10px">${aviso}</p>
+    <div class="field">
+      <label for="impList">Cole a lista</label>
+      <textarea id="impList" name="lista" class="input" style="min-height:130px;font-size:12.5px"
+        placeholder="Ex: ${esc(alvo === "subjects" ? "Português, Matemática" : "Crase, Pontuação")}"></textarea>
+      <div class="hint">Aceita <b>JSON</b> ou nomes <b>separados por vírgula</b> (ou uma por linha).</div>
+    </div>
+    <div class="field">
+      <label for="impFile2">ou escolha o arquivo (.json / .txt)</label>
+      <input id="impFile2" type="file" accept=".json,.txt,application/json,text/plain" class="input imp-file">
+    </div>
+    <details style="margin-top:10px">
+      <summary class="small" style="cursor:pointer;color:var(--accent)">Ver exemplo</summary>
+      <pre class="info-box" style="white-space:pre-wrap;font-size:10.5px;line-height:1.5;overflow:auto;max-height:170px">${esc(exemplo)}</pre>
+    </details>
+  `, "Importar", (vals)=>{
+    const res = parseNameList(vals.lista);
+    if(res.erro) return toast("JSON inválido. Confira o exemplo.") || false;
+    if(!res.itens.length) return toast("Cole ao menos um nome") || false;
+    const r = (alvo === "subjects")
+      ? importarMaterias(concursoAtual(), res.itens)
+      : importarConteudos(concursoAtual(), ui.sid, res.itens);
+    if(!r) return false;
+    saveDB(); render();
+    toast(r);
+    return true;
+  }, { after: ()=>{
+    const inp = document.getElementById("impFile2");
+    const ta = document.getElementById("impList");
+    if(inp) inp.addEventListener("change", ()=>{
+      const f = inp.files && inp.files[0];
+      if(!f) return;
+      const rd = new FileReader();
+      rd.onload = ()=>{ if(ta) ta.value = String(rd.result); toast("Arquivo carregado. Toque em Importar."); };
+      rd.readAsText(f);
+    });
+  }});
+}
+
+function importarMaterias(c, itens){
+  if(!c) return "Crie um concurso primeiro";
+  let novas = 0, novosConteudos = 0;
+  itens.forEach(it=>{
+    let s = c.subjects.find(x=>norm(x.name) === norm(it.nome));
+    if(!s){
+      s = { id: uid(), name: it.nome, color: SUBJECT_COLORS[c.subjects.length % SUBJECT_COLORS.length], topics: [] };
+      c.subjects.push(s);
+      novas++;
+    }
+    (it.conteudos || []).forEach(nome=>{
+      if(!nome) return;
+      if(s.topics.some(t=>norm(t.name) === norm(nome))) return;
+      s.topics.push({ id: uid(), name: nome, done:false, difficulty:null, definitions:[], cards:[], questions:[], ws:null });
+      novosConteudos++;
+    });
+  });
+  const partes = [];
+  if(novas) partes.push(novas + " matéria" + (novas===1?"":"s"));
+  if(novosConteudos) partes.push(novosConteudos + " conteúdo" + (novosConteudos===1?"":"s"));
+  return partes.length ? "Adicionado: " + partes.join(" e ") : "Tudo já existia por aqui";
+}
+
+function importarConteudos(c, sid, itens){
+  const s = c && c.subjects.find(x=>x.id === sid);
+  if(!s) return "Matéria não encontrada";
+  let novos = 0, repetidos = 0;
+  itens.forEach(it=>{
+    if(s.topics.some(t=>norm(t.name) === norm(it.nome))){ repetidos++; return; }
+    s.topics.push({
+      id: uid(), name: it.nome, done: !!it.feito, difficulty: it.dificuldade || null,
+      definitions:[], cards:[], questions:[], ws:null
+    });
+    novos++;
+  });
+  if(!novos) return "Esses conteúdos já existem aqui";
+  return novos + " conteúdo" + (novos===1?"":"s") + " adicionado" + (novos===1?"":"s") + (repetidos ? " · " + repetidos + " já existia(m)" : "");
+}
+
+ACTIONS.importSubjects = (el)=>{
+  const c = concursoAtual(); if(!c) return toast("Crie um concurso primeiro");
+  importModal({
+    titulo: "Importar matérias",
+    alvo: "subjects",
+    exemplo: IMP_EXEMPLO_MATERIAS,
+    aviso: "As matérias entram neste concurso (" + esc(c.name) + "). Se o JSON trouxer <b>conteudos</b>, eles já vêm dentro da matéria."
+  });
+};
+
+ACTIONS.importTopics = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  const s = c.subjects.find(x=>x.id === el.dataset.sid); if(!s) return;
+  ui.sid = s.id;
+  importModal({
+    titulo: "Importar conteúdos",
+    alvo: "topics",
+    exemplo: IMP_EXEMPLO_CONTEUDOS,
+    aviso: "Os conteúdos entram na matéria <b>" + esc(s.name) + "</b>."
+  });
+};
+
+/* ---------- importar "nome,definição" (cards, definições e caça-palavras) ---------- */
+function parsePares(raw){
+  const txt = String(raw||"").replace(/\r/g,"").trim();
+  if(!txt) return [];
+  const linhas = txt.split("\n").map(l=>l.trim()).filter(Boolean);
+  const pares = [];
+  // tudo numa linha só, alternando nome,definição,nome,definição
+  if(linhas.length === 1){
+    const partes = linhas[0].split(",").map(x=>x.trim()).filter(Boolean);
+    if(partes.length >= 4 && partes.length % 2 === 0){
+      for(let i=0;i<partes.length;i+=2) pares.push({ term:partes[i], def:partes[i+1] });
+      return pares;
+    }
+  }
+  // uma por linha: a primeira vírgula separa o nome da definição
+  linhas.forEach(l=>{
+    const i = l.indexOf(",");
+    if(i < 1) return;
+    const term = l.slice(0,i).trim(), def = l.slice(i+1).trim();
+    if(term && def) pares.push({ term, def });
+  });
+  return pares;
+}
+
+ACTIONS.importPairs = (el)=>{
+  const c = concursoAtual(); if(!c) return toast("Crie um concurso primeiro");
+  let s = null, fixo = null;
+  if(el.dataset.tid){
+    const f = findTopicById(el.dataset.tid); if(!f) return;
+    s = f.subject; fixo = f.topic;
+  } else {
+    s = c.subjects.find(x=>x.id === el.dataset.sid);
+  }
+  if(!s) return;
+  if(!s.topics.length) return toast("Crie um conteúdo nesta matéria primeiro");
+  const kind = el.dataset.kind || "card";
+  const opts = s.topics.map(t=>`<option value="${t.id}" ${fixo && fixo.id === t.id ? "selected" : ""}>${esc(t.name)}</option>`).join("");
+  showModal("Importar nome,definição", `
+    <div class="field">
+      <label for="ipTopic">Conteúdo de destino</label>
+      <select id="ipTopic" name="tid" class="input">${opts}</select>
+    </div>
+    <div class="field">
+      <label for="ipTxt">Cole aqui (um por linha)</label>
+      <textarea id="ipTxt" name="texto" class="input" style="min-height:150px" placeholder="FUTEBOL,É um esporte onde jogadores jogam num campo e quem fizer gols ganha&#10;REGRA DE 3,É uma regra na matemática que avalia grandezas diferentes"></textarea>
+      <div class="hint">Formato: <b>nome,definição</b>. A primeira vírgula separa as duas partes.</div>
+    </div>
+    <div class="field">
+      <label>Importar como</label>
+      <label class="row" style="gap:10px;margin-top:6px"><input type="checkbox" name="kCard" value="1" ${kind === "card" ? "checked" : ""}> 🃏 Cards (nome na frente, definição no verso)</label>
+      <label class="row" style="gap:10px;margin-top:6px"><input type="checkbox" name="kDef" value="1" ${kind === "def" ? "checked" : ""}> 📝 Definições</label>
+      <label class="row" style="gap:10px;margin-top:6px"><input type="checkbox" name="kWs" value="1" ${kind === "ws" ? "checked" : ""}> 🔎 Caça-palavras (usa o nome, de 3 a 14 letras)</label>
+    </div>
+  `, "Importar", (vals)=>{
+    const f = findTopicById(vals.tid); if(!f) return toast("Escolha o conteúdo") || false;
+    const t = f.topic;
+    const pares = parsePares(vals.texto);
+    if(!pares.length) return toast("Não achei nenhum par. Use: nome,definição") || false;
+    const wCard = !!vals.kCard, wDef = !!vals.kDef, wWs = !!vals.kWs;
+    if(!wCard && !wDef && !wWs) return toast("Marque onde importar") || false;
+    const chave = x => String(x||"").trim().toLowerCase();
+    let nCard = 0, nDef = 0, nWs = 0, ign = 0;
+
+    if(wCard){
+      pares.forEach(p=>{
+        if(t.cards.some(k=>chave(k.front) === chave(p.term))) return;
+        t.cards.push({ id: uid(), front: p.term.slice(0,120), back: p.def.slice(0,800) }); nCard++;
+      });
+    }
+    if(wDef){
+      pares.forEach(p=>{
+        if(t.definitions.some(d=>chave(d.term) === chave(p.term))) return;
+        t.definitions.push({ id: uid(), term: p.term.slice(0,120), def: p.def.slice(0,800) }); nDef++;
+      });
+    }
+    if(wWs){
+      const atuais = (t.ws && t.ws.words) ? t.ws.words.slice() : [];
+      const novas = [];
+      pares.forEach(p=>{
+        const w = normWord(p.term);
+        if(w.length < 3 || w.length > 14){ ign++; return; }
+        if(atuais.includes(w) || novas.includes(w)) return;
+        novas.push(w);
+      });
+      if(novas.length){
+        const todas = atuais.concat(novas);
+        const rebuilt = buildWs(todas);
+        if(rebuilt){ t.ws = Object.assign(rebuilt, { words: todas }); nWs = novas.length; }
+      }
+    }
+
+    const partes = [];
+    if(wCard) partes.push(nCard + " card" + (nCard===1?"":"s"));
+    if(wDef) partes.push(nDef + " definiç" + (nDef===1?"ão":"ões"));
+    if(wWs) partes.push(nWs + " palavra" + (nWs===1?"":"s"));
+    saveDB(); render();
+    toast("Importado: " + partes.join(" · ") + (ign ? " · " + ign + " fora de 3–14 letras" : ""));
+    return true;
+  });
+};
+
+/* ---------- caça-palavras: palavras ---------- */
+ACTIONS.newWsWord = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  showModal("Nova palavra", `
+    <div class="field">
+      <label for="wWord">Palavra (3 a 14 letras)</label>
+      <input id="wWord" name="word" class="input" type="text" placeholder="Ex: PLANILHA" maxlength="14" required>
+      <div class="hint">Acentos e espaços são removidos automaticamente.</div>
+    </div>
+  `, "Adicionar", (vals)=>{
+    const w = normWord(vals.word);
+    if(w.length < 3) return toast("Mínimo de 3 letras") || false;
+    if(!t.ws) t.ws = { words:[], size:0, grid:[], placed:[], found:[], revealed:false };
+    if(t.ws.words.includes(w)) return toast("Palavra já adicionada") || false;
+    t.ws.words.push(w);
+    const rebuilt = buildWs(t.ws.words);
+    if(rebuilt) t.ws = Object.assign(rebuilt, { words: t.ws.words });
+    saveDB(); render(); toast("Palavra adicionada");
+    return true;
+  });
+};
+
+ACTIONS.delWsWord = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t || !t.ws) return;
+  t.ws.words = t.ws.words.filter(w=>w !== el.dataset.w);
+  if(t.ws.words.length){
+    const rebuilt = buildWs(t.ws.words);
+    if(rebuilt) t.ws = Object.assign(rebuilt, { words: t.ws.words });
+  } else {
+    t.ws = null;
+  }
+  saveDB(); render();
+};
+
+ACTIONS.genWs = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t) return;
+  if(!t.ws || !t.ws.words.length) return toast("Adicione palavras primeiro");
+  const words = t.ws.words.slice();
+  const rebuilt = buildWs(words);
+  if(!rebuilt) return toast("Não consegui montar o jogo");
+  t.ws = Object.assign(rebuilt, { words });
+  saveDB(); render(); toast("Caça-palavras gerado");
+};
+
+/* ---------- caça-palavras: jogo ---------- */
+ACTIONS.wsCell = (el)=>{
+  const p = ui.practice;
+  if(!p || p.type !== "ws") return;
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t || !t.ws) return;
+  const ws = t.ws;
+  const cell = [Number(el.dataset.r), Number(el.dataset.c)];
+
+  if(!ui.ws.start){
+    ui.ws.start = cell;
+    ui.ws.sel = [cell];
+    render();
+    return;
+  }
+  const path = linePath(ui.ws.start, cell);
+  if(!path){ ui.ws.start = cell; ui.ws.sel = [cell]; render(); return; }
+
+  const letters = path.map(([r,c]) => ws.grid[r][c]).join("");
+  const rev = letters.split("").reverse().join("");
+  const hit = (ws.placed||[]).find(pl =>
+    (pl.word === letters || pl.word === rev) && !(ws.found||[]).includes(pl.word)
+  );
+
+  ui.ws.start = null;
+  ui.ws.sel = [];
+  if(hit){
+    ws.found = (ws.found||[]).concat(hit.word);
+    saveDB();
+    if(ws.found.length === (ws.words||[]).length) toast("🎉 Todas as palavras!");
+    else toast("Achou: " + hit.word);
+  }
+  render();
+};
+
+ACTIONS.wsReveal = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t || !t.ws) return;
+  t.ws.found = (t.ws.words||[]).slice();
+  saveDB(); render(); toast("Gabarito revelado");
+};
+
+ACTIONS.wsReset = (el)=>{
+  const t = findTopicById(el.dataset.tid)?.topic; if(!t || !t.ws) return;
+  const words = t.ws.words.slice();
+  const rebuilt = buildWs(words);
+  t.ws = Object.assign(rebuilt || t.ws, { words, found: [] });
+  saveDB(); ui.ws = { start:null, sel:[] }; render(); toast("Jogo reiniciado");
+};
+
+/* ---------- prática ---------- */
+ACTIONS.startPractice = (el)=>{
+  startPractice(el.dataset.type, el.dataset.tid);
+};
+
+ACTIONS.reveal = ()=>{ if(ui.practice){ ui.practice.revealed = true; render(); } };
+
+ACTIONS.grade = (el)=>{
+  const p = ui.practice; if(!p) return;
+  if(el.dataset.ok === "1") p.hits++; else p.misses++;
+  p.index++; p.revealed = false;
+  const t = findTopicById(p.tid)?.topic;
+  if(t && p.index >= t.definitions.length){
+    toast("Fim! Acertos: "+p.hits+" · Erros: "+p.misses);
+    p.index = 0; p.hits = 0; p.misses = 0;
+  }
+  render();
+};
+
+ACTIONS.nextDef = ()=>{
+  const p = ui.practice; if(!p) return;
+  p.index++; p.revealed = false;
+  const t = findTopicById(p.tid)?.topic;
+  if(t && p.index >= t.definitions.length) p.index = 0;
+  render();
+};
+
+ACTIONS.flip = ()=>{ if(ui.practice){ ui.practice.flipped = !ui.practice.flipped; render(); } };
+
+ACTIONS.nextCard = ()=>{
+  const p = ui.practice; if(!p) return;
+  const t = findTopicById(p.tid)?.topic;
+  p.index = t && t.cards.length ? (p.index + 1) % t.cards.length : 0;
+  p.flipped = false; render();
+};
+
+ACTIONS.prevCard = ()=>{
+  const p = ui.practice; if(!p) return;
+  const t = findTopicById(p.tid)?.topic;
+  const n = t ? t.cards.length : 1;
+  p.index = (p.index - 1 + n) % n;
+  p.flipped = false; render();
+};
+
+ACTIONS.speak = (el)=>{
+  const txt = el.dataset.text || "";
+  if(!("speechSynthesis" in window)) return toast("Este navegador não fala em voz alta");
+  try{
+    const u = new SpeechSynthesisUtterance(txt);
+    u.lang = "pt-BR"; u.rate = 0.95;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){ toast("Não consegui falar"); }
+};
+
+ACTIONS.dictate = (el)=>{
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return toast("Ditado não disponível aqui. Digite.");
+  try{
+    const rec = new SR();
+    rec.lang = "pt-BR";
+    rec.interimResults = false;
+    rec.continuous = false;
+    rec.onresult = (ev)=>{
+      const txt = Array.from(ev.results).map(r=>r[0].transcript).join(" ").trim();
+      const target = document.getElementById(el.dataset.target);
+      if(target) target.value = (target.value ? target.value + " " : "") + txt;
+      toast("Capturado!");
+    };
+    rec.onerror = ()=> toast("Não consegui ouvir. Tente de novo.");
+    rec.start();
+    toast("🎤 Ouvindo...");
+  }catch(e){ toast("Ditado indisponível"); }
+};
+
+/* ==================================================================
+   TELA: CONCURSOS
+   ================================================================== */
+function viewConcursos(){
+  const rows = db.concursos.length
+    ? db.concursos.map(c=>{
+        const st = stats(c);
+        const on = c.id === (concursoAtual()||{}).id;
+        return `<button class="item" data-act="openConcurso" data-cid="${c.id}">
+          <span class="dot" style="background:${on ? "var(--accent)" : "var(--line-2)"}"></span>
+          <span class="txt"><b>${esc(c.name)}</b>
+            <span>${c.examDate ? (st.days >= 0 ? "faltam "+st.days+" dias" : "prova realizada") : "sem data"} · ${Number(c.hoursTarget)||0}h necessárias · ${c.subjects.length} matéria${c.subjects.length===1?"":"s"}</span>
+          </span>
+          <span class="right"><span class="chev">›</span></span>
+        </button>`;
+      }).join("")
+    : "";
+
+  return `
+    <div class="page-head"><h2>Concursos</h2><span class="sp grow"></span>
+      <button class="btn xs primary" data-act="newConcurso">+ Novo</button>
+    </div>
+    <p class="muted small" style="margin-bottom:12px">Cada concurso tem suas matérias, horas e práticas separadas.</p>
+    ${rows ? '<div class="list">'+rows+'</div>' : '<div class="empty"><b>Nenhum concurso</b>Comece criando o primeiro.</div>'}
+    <div class="card" style="margin-top:14px">
+      <div class="card-title"><h3>➕ Outro concurso</h3></div>
+      <p class="small muted">Pode ter quantos quiser: PM-BA, TJ-SP, Receita Federal... No rodapé você troca de um para o outro com um toque.</p>
+      <button class="btn primary block" style="margin-top:10px" data-act="newConcurso">Criar concurso</button>
+    </div>
+  `;
+}
+
+/* ==================================================================
+   TELA: DADOS (backup, reset, perfil)
+   ================================================================== */
+function viewDados(){
+  const conc = db.concursos.length;
+  const subs = db.concursos.reduce((a,c)=>a+c.subjects.length,0);
+  const tops = db.concursos.reduce((a,c)=>a+c.subjects.reduce((b,s)=>b+s.topics.length,0),0);
+  const mins = minutesOfAll();
+  const idadeTxt = idade() ? idade() + " anos" : "";
+
+  return `
+    <div class="page-head"><h2>Dados</h2></div>
+
+    <div class="card">
+      <div class="row" style="gap:12px">
+        <div class="avatar" style="width:56px;height:56px;font-size:19px">${photoURL() ? '<img src="'+photoURL()+'">' : esc(initials())}</div>
+        <div class="grow" style="min-width:0">
+          <div style="font-weight:700;font-size:16px">${esc(db.profile.name)}</div>
+          <div class="tiny muted">${db.profile.birthDate ? dateBR(db.profile.birthDate)+(idadeTxt ? " · "+idadeTxt : "") : "sem data de nascimento"}</div>
+        </div>
+        <button class="btn xs" data-act="editProfile">Editar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>📊 Resumo</h3></div>
+      <div class="kv"><span>Concursos</span><b>${conc}</b></div>
+      <div class="kv"><span>Matérias</span><b>${subs}</b></div>
+      <div class="kv"><span>Conteúdos</span><b>${tops}</b></div>
+      <div class="kv"><span>Horas registradas</span><b>${fmtMin(mins)}</b></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>💾 Backup</h3></div>
+      <p class="small muted" style="margin-bottom:12px">Salva <b>todo o conteúdo</b> (perfil, concursos, matérias, conteúdos, definições, cards, caça-palavras e horas) num arquivo .json.</p>
+      <button class="btn primary block" data-act="exportBackup">⬇️ Salvar backup (.json)</button>
+      <button class="btn block" style="margin-top:8px" data-act="importBackup">⬆️ Restaurar backup</button>
+      <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+      <p class="hint">Restaurar substitui os dados atuais deste aparelho pelos do arquivo.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>🧹 Apagar e redefinir</h3></div>
+      <p class="small muted" style="margin-bottom:12px">Zera tudo e volta para a tela de primeiro acesso. Não tem como desfazer.</p>
+      <button class="btn danger block" data-act="resetAll">Apagar todos os dados</button>
+    </div>
+
+    <p class="tiny muted" style="text-align:center;margin-top:16px">HelpEstudo v${APP_VERSION} · dados salvos só neste aparelho</p>
+  `;
+}
+
+function minutesOfAll(){
+  return db.log.reduce((a,l)=>a+(Number(l.minutes)||0),0);
+}
+
+/* ---------- backup ---------- */
+ACTIONS.exportBackup = ()=>{
+  const payload = {
+    app: "HelpEstudo",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data: db
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const nome = "helpestudo-backup-" + todayISO() + ".json";
+  const a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  toast("Backup salvo: " + nome);
+};
+
+ACTIONS.importBackup = ()=>{
+  const inp = document.getElementById("importFile");
+  if(!inp) return;
+  inp.value = "";
+  inp.onchange = ()=>{
+    const f = inp.files && inp.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const parsed = JSON.parse(String(reader.result));
+        const data = parsed && parsed.data ? parsed.data : parsed;
+        if(!data || !Array.isArray(data.concursos)) throw new Error("formato");
+        const novo = normalize(data);
+        if(!novo.profile.name) novo.profile.name = db.profile.name || "Estudante";
+        confirmBox("Restaurar backup?", "Os dados atuais serão substituídos pelos do arquivo.", ()=>{
+          db = novo;
+          ui = Object.assign(ui, { tab:"home", cid:db.concursos[0] ? db.concursos[0].id : null, sid:null, tid:null, practice:null });
+          db.activeId = ui.cid;
+          saveDB(); render(); toast("Backup restaurado");
+        });
+      }catch(e){
+        toast("Arquivo inválido. Use um backup do HelpEstudo.");
+      }
+    };
+    reader.readAsText(f);
+  };
+  inp.click();
+};
+
+ACTIONS.resetAll = ()=>{
+  confirmBox("Apagar tudo e redefinir?", "Perfil, concursos, matérias, conteúdos e horas serão apagados deste aparelho. Faça um backup antes, se quiser guardar.", ()=>{
+    try{ store.removeItem(STORAGE_KEY); }catch(e){}
+    db = newDB();
+    ui = { tab:"home", cid:null, sid:null, tid:null, practice:null, psub:null, ws:{start:null,sel:[]}, tmpPhoto:"" };
+    render();
+    toast("Tudo apagado. Bons estudos!");
+  });
+};
+
+/* ==================================================================
+   PERFIL
+   ================================================================== */
+function openProfileModal(){
+  ui.tmpPhoto = photoURL();
+  showModal("Seu perfil", `
+    <div class="photo-pick">
+      <label for="pfPhoto" class="photo-ring ${ui.tmpPhoto?"has":""}" id="pfRing">
+        ${ui.tmpPhoto ? '<img src="'+ui.tmpPhoto+'" id="pfImg">' : '<span id="pfTxt">Toque para escolher</span>'}
+      </label>
+      <input id="pfPhoto" type="file" accept="image/*" class="hidden">
+    </div>
+    <div class="field">
+      <label for="pfName">Nome</label>
+      <input id="pfName" name="name" class="input" type="text" value="${esc(db.profile.name)}" maxlength="40" required>
+    </div>
+    <div class="field">
+      <label for="pfBirth">Data de nascimento</label>
+      <input id="pfBirth" name="birthDate" class="input" type="date" value="${esc(db.profile.birthDate||"")}">
+    </div>
+  `, "Salvar perfil", (vals)=>{
+    const name = (vals.name||"").trim();
+    if(!name) return toast("Digite seu nome") || false;
+    db.profile.name = name;
+    db.profile.birthDate = vals.birthDate || "";
+    if(ui.tmpPhoto) db.profile.photo = ui.tmpPhoto;
+    saveDB(); render(); toast("Perfil salvo");
+    return true;
+  }, { after: ()=>{
+    const inp = document.getElementById("pfPhoto");
+    if(inp) inp.addEventListener("change", ()=> handlePhoto(inp, document.getElementById("pfRing"), (url)=>{
+      ui.tmpPhoto = url;
+    }));
+  }});
+}
+
+/* lê a foto, reduz e devolve dataURL */
+function handlePhoto(input, ring, cb){
+  const f = input.files && input.files[0];
+  if(!f) return;
+  if(!/^image\//.test(f.type)) return toast("Escolha uma imagem");
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const size = 320;
+      const canvas = document.createElement("canvas");
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      const side = Math.min(img.width, img.height);
+      const sx = (img.width - side)/2, sy = (img.height - side)/2;
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+      let url = "";
+      try{ url = canvas.toDataURL("image/jpeg", 0.82); }catch(e){ url = String(reader.result); }
+      if(ring){
+        ring.classList.add("has");
+        ring.innerHTML = '<img src="'+url+'" alt="foto">';
+      }
+      if(cb) cb(url);
+    };
+    img.onerror = ()=> toast("Não consegui abrir a imagem");
+    img.src = String(reader.result);
+  };
+  reader.readAsDataURL(f);
+}
+
+/* ==================================================================
+   MODAL / CONFIRMAÇÃO
+   ================================================================== */
+let modalSubmit = null;
+
+function showModal(title, bodyHTML, submitLabel, onSubmit, opts={}){
+  modalSubmit = onSubmit;
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="modal-backdrop" data-act="closeModal"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>${esc(title)}</h3>
+        <button class="icon-btn sm" data-act="closeModal" aria-label="Fechar">✕</button>
+      </div>
+      <form id="modalForm" novalidate>
+        <div class="modal-body">${bodyHTML}</div>
+        <div class="modal-foot">
+          <button type="button" class="btn ghost" data-act="closeModal">Cancelar</button>
+          <button type="submit" class="btn primary">${esc(submitLabel||"Salvar")}</button>
+        </div>
+      </form>
+    </div>`;
+  root.classList.add("open");
+
+  const form = document.getElementById("modalForm");
+  form.addEventListener("submit", (ev)=>{
+    ev.preventDefault();
+    const fd = new FormData(form);
+    const vals = {};
+    fd.forEach((v,k)=>{ vals[k] = typeof v === "string" ? v : v; });
+    const res = modalSubmit ? modalSubmit(vals, form) : true;
+    if(res !== false) closeModal();
+  });
+
+  if(opts.after) try{ opts.after(); }catch(e){ console.warn(e); }
+  setTimeout(()=>{
+    const first = form.querySelector("input:not([type=hidden]),textarea");
+    if(first && !("ontouchstart" in window)) first.focus();
+  }, 60);
+}
+
+function closeModal(){
+  const root = document.getElementById("modalRoot");
+  root.classList.remove("open");
+  root.innerHTML = "";
+  modalSubmit = null;
+}
+
+ACTIONS.closeModal = ()=>{ closeModal(); };
+
+/* ---------- caixinha de exemplo de JSON (abre por cima do modal) ---------- */
+function exemploBox(titulo, texto, dica){
+  const root = document.getElementById("exemploRoot");
+  root.innerHTML = `
+    <div class="modal-backdrop" data-act="closeExemplo"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>${esc(titulo)}</h3>
+        <button class="icon-btn sm" data-act="closeExemplo" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        ${dica ? `<p class="small muted" style="margin-bottom:10px">${dica}</p>` : ""}
+        <pre id="exemploTexto" class="info-box" style="white-space:pre-wrap;font-size:10.5px;line-height:1.55;max-height:46vh;overflow:auto">${esc(texto)}</pre>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn ghost" data-act="closeExemplo">Fechar</button>
+        <button type="button" class="btn primary" data-act="copyExemplo">📋 Copiar exemplo</button>
+      </div>
+    </div>`;
+  root.classList.add("open");
+  const pre = document.getElementById("exemploTexto");
+  if(pre) pre.scrollTop = 0;
+}
+function closeExemplo(){
+  const root = document.getElementById("exemploRoot");
+  if(!root) return;
+  root.classList.remove("open");
+  root.innerHTML = "";
+}
+ACTIONS.closeExemplo = ()=>{ closeExemplo(); };
+
+function copiarTexto(txt, ok){
+  const fallback = ()=>{
+    const ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    let deu = false;
+    try{ deu = document.execCommand("copy"); }catch(e){ deu = false; }
+    document.body.removeChild(ta);
+    deu ? ok() : toast("Selecione o texto e copie na mão");
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok).catch(fallback);
+  }else fallback();
+}
+
+ACTIONS.copyExemplo = ()=>{
+  const el = document.getElementById("exemploTexto");
+  const txt = el ? el.textContent : "";
+  if(!txt) return;
+  copiarTexto(txt, ()=> toast("Exemplo copiado"));
+};
+
+let confirmCb = null;
+function confirmBox(title, text, onYes){
+  confirmCb = onYes;
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="modal-backdrop" data-act="closeModal"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head"><h3>${esc(title)}</h3></div>
+      <p class="small muted" style="margin-bottom:16px">${esc(text)}</p>
+      <div class="modal-foot">
+        <button class="btn ghost" data-act="closeModal">Cancelar</button>
+        <button class="btn danger" data-act="confirmYes">Sim, apagar</button>
+      </div>
+    </div>`;
+  root.classList.add("open");
+}
+
+ACTIONS.confirmYes = ()=>{
+  const cb = confirmCb;
+  confirmCb = null;
+  closeModal();
+  if(cb) cb();
+};
+
+/* fecha modal com ESC */
+document.addEventListener("keydown", (ev)=>{
+  if(ev.key === "Escape") closeModal();
+});
+
+/* ==================================================================
+   ONBOARDING
+   ================================================================== */
+function bindOnboarding(){
+  document.querySelectorAll('[data-act="obPickPhoto"]').forEach(b=>{
+    b.addEventListener("click", ()=> document.getElementById("obPhoto").click());
+  });
+  document.getElementById("obPhoto").addEventListener("change", (ev)=>{
+    handlePhoto(ev.target, document.getElementById("obPhotoRing"), (url)=>{
+      ui.tmpPhoto = url;
+      document.getElementById("obPhotoTxt") && (document.getElementById("obPhotoTxt").textContent = "Trocar foto");
+    });
+  });
+
+  document.getElementById("onboardForm").addEventListener("submit", (ev)=>{
+    ev.preventDefault();
+    const name = document.getElementById("obName").value.trim();
+    const birth = document.getElementById("obBirth").value;
+    if(!name) return toast("Digite seu nome");
+    if(!ui.tmpPhoto) toast("Sem foto tudo bem, você pode colocar depois");
+    db = newDB();
+    db.profile.name = name;
+    db.profile.birthDate = birth || "";
+    db.profile.photo = ui.tmpPhoto || "";
+    saveDB();
+    render();
+    ui.tab = "home";
+    setTimeout(()=> toast("Bem-vindo, " + name.split(" ")[0] + "!"), 150);
+  });
+}
+
+/* ==================================================================
+   INICIALIZAÇÃO
+   ================================================================== */
+(function init(){
+  db = loadDB();
+  if(db && db.profile && db.profile.name){
+    ui.cid = db.activeId || (db.concursos[0] ? db.concursos[0].id : null);
+  }
+  bindOnboarding();
+  render();
+})();
+</script>
+</body>
+</html>
