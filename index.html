@@ -739,8 +739,9 @@ html[data-theme="light"]{
       </div>
 
       <button class="btn primary block" type="submit">Começar a estudar →</button>
-      <p class="hint" style="text-align:center;margin-top:10px">Tudo fica salvo só no seu aparelho. Você pode fazer backup em Dados.</p>
+      <p class="hint" style="text-align:center;margin-top:10px">Os dados ficam salvos no seu aparelho. Crie uma conta em Dados para guardar na nuvem.</p>
     </form>
+    <button type="button" class="btn ghost block" style="margin-top:12px" data-act="cloudLogin">☁️ Já tenho conta — entrar</button>
   </div>
 </div>
 
@@ -1050,6 +1051,7 @@ function loadDB(){
 function saveDB(){
   try{
     store.setItem(STORAGE_KEY, JSON.stringify(db));
+    try{ cloudMarkDirty(); }catch(e){}
     return true;
   }catch(e){
     console.error(e);
@@ -4668,6 +4670,8 @@ function viewDados(){
       <div class="kv"><span>Horas registradas</span><b>${fmtMin(mins)}</b></div>
     </div>
 
+    ${cloudCardHtml()}
+
     <div class="card">
       <div class="card-title"><h3>💾 Backup</h3></div>
       <p class="small muted" style="margin-bottom:12px">Salva <b>todo o conteúdo</b> (perfil, concursos, matérias, conteúdos, definições, cards, caça-palavras e horas) num arquivo .json.</p>
@@ -5352,6 +5356,322 @@ function bindOnboarding(){
 }
 
 /* ==================================================================
+   NUVEM (Supabase): login, senha e sincronização dos dados
+   ================================================================== */
+const SB_URL = "https://imgduqxhkprqzpehfapy.supabase.co";
+const SB_KEY = "sb_publishable_69_MkYNa0TnR7ExCcS9FBw_itk6N8j_";   // chave pública (segura no app); a secreta NUNCA entra aqui
+const AUTH_KEY = "helpestudo_auth", SYNC_KEY = "helpestudo_sync";
+const cloud = { session:null, busy:false, again:false, timer:null, ver:0, status:"", lastOk:"", last:0 };
+
+function jget(k){ try{ return JSON.parse(store.getItem(k) || "null"); }catch(e){ return null; } }
+function jset(k, v){ try{ store.setItem(k, JSON.stringify(v)); }catch(e){} }
+function syncMeta(){ return jget(SYNC_KEY) || { uid:null, syncedAt:null, dirty:false }; }
+function cloudMarkDirty(){
+  cloud.ver++;
+  const m = syncMeta(); m.dirty = true; jset(SYNC_KEY, m);
+  cloudSchedulePush();
+}
+function cloudStatus(msg){
+  cloud.status = msg || "";
+  if(ui && ui.tab === "dados" && db && db.profile && db.profile.name){ const y = window.scrollY; render(); window.scrollTo(0, y); }
+}
+function cloudHora(){ const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+
+function sbMsg(body, status){
+  const raw = body && typeof body === "object" ? (body.msg || body.message || body.error_description || body.error || "") : String(body || "");
+  const code = body && typeof body === "object" ? (body.error_code || body.code || "") : "";
+  const t = (raw + " " + code).toLowerCase();
+  if(t.includes("invalid login") || t.includes("invalid_credentials")) return "E-mail ou senha incorretos.";
+  if(t.includes("not confirmed") || t.includes("email_not_confirmed")) return "Confirme seu e-mail antes de entrar (veja a caixa de entrada e o spam).";
+  if(t.includes("already registered") || t.includes("user_already_exists")) return "Esse e-mail já tem conta. Toque em “Já tenho conta”.";
+  if(t.includes("rate limit") || t.includes("over_email_send_rate_limit") || status === 429) return "Muitas tentativas. Espere um pouco e tente de novo.";
+  if(t.includes("weak_password") || t.includes("at least 6") || t.includes("password should")) return "Senha fraca: use pelo menos 6 caracteres.";
+  if(t.includes("same_password") || t.includes("different from the old")) return "Use uma senha diferente da anterior.";
+  if(t.includes("signup is disabled") || t.includes("signup_disabled")) return "Novos cadastros estão desativados.";
+  if(t.includes("invalid email") || t.includes("validation_failed")) return "E-mail inválido.";
+  return raw ? raw : ("Erro " + (status || "")).trim();
+}
+async function sbRaw(path, opts, token){
+  const headers = Object.assign({ apikey: SB_KEY, "Content-Type": "application/json" }, (opts && opts.headers) || {});
+  if(token) headers.Authorization = "Bearer " + token;
+  let r;
+  try{ r = await fetch(SB_URL + path, Object.assign({}, opts, { headers })); }
+  catch(e){ const err = new Error("Sem conexão com a internet."); err.net = true; throw err; }
+  const txt = await r.text(); let body = null;
+  try{ body = txt ? JSON.parse(txt) : null; }catch(e){ body = txt; }
+  if(!r.ok){ const err = new Error(sbMsg(body, r.status)); err.status = r.status; err.body = body; throw err; }
+  return body;
+}
+function cloudSaveSession(b){
+  const s = { access_token:b.access_token, refresh_token:b.refresh_token,
+    expires_at: b.expires_at || (Math.floor(Date.now()/1000) + (Number(b.expires_in) || 3600)),
+    user: { id: b.user && b.user.id, email: b.user && b.user.email } };
+  cloud.session = s; jset(AUTH_KEY, s); return s;
+}
+function cloudDropSession(){ cloud.session = null; try{ store.removeItem(AUTH_KEY); }catch(e){} }
+async function sbToken(force){
+  const s = cloud.session; if(!s) return null;
+  if(!force && s.expires_at - Math.floor(Date.now()/1000) > 60) return s.access_token;
+  try{
+    const b = await sbRaw("/auth/v1/token?grant_type=refresh_token", { method:"POST", body: JSON.stringify({ refresh_token: s.refresh_token }) });
+    if(!b.user) b.user = s.user;
+    return cloudSaveSession(b).access_token;
+  }catch(e){
+    if(e.net) throw e;
+    cloudDropSession(); cloud.status = "Sua sessão expirou. Entre de novo."; render();
+    throw new Error("Sua sessão expirou. Entre de novo.");
+  }
+}
+async function sbAuthed(path, opts){
+  let tok = await sbToken(false);
+  try{ return await sbRaw(path, opts, tok); }
+  catch(e){
+    if(e.status === 401 && cloud.session){ tok = await sbToken(true); return await sbRaw(path, opts, tok); }
+    throw e;
+  }
+}
+
+/* ---------- dados na nuvem ---------- */
+async function cloudGet(uid, leve){
+  const rows = await sbAuthed("/rest/v1/user_data?select=" + (leve ? "updated_at" : "data,updated_at") + "&user_id=eq." + encodeURIComponent(uid) + "&limit=1", { method:"GET" });
+  return Array.isArray(rows) && rows[0] ? rows[0] : null;
+}
+async function cloudPush(){
+  const uid = cloud.session.user.id, ver = cloud.ver, iso = new Date().toISOString();
+  await sbAuthed("/rest/v1/user_data?on_conflict=user_id", {
+    method:"POST", headers:{ Prefer:"resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ user_id: uid, data: db, updated_at: iso })
+  });
+  const m = syncMeta(); m.uid = uid; m.syncedAt = iso; m.dirty = (cloud.ver !== ver); jset(SYNC_KEY, m);
+  cloud.lastOk = cloudHora();
+  cloudStatus("Sincronizado às " + cloud.lastOk);
+  if(m.dirty) cloudSchedulePush();
+}
+async function cloudAdopt(uid){
+  const row = await cloudGet(uid, false);
+  if(!row || !row.data) return;
+  db = normalize(row.data);
+  ui.cid = db.activeId || (db.concursos[0] ? db.concursos[0].id : null);
+  ui.sid = null; ui.tid = null; ui.practice = null; ui.sel = null; ui.tab = "home";
+  try{ store.setItem(STORAGE_KEY, JSON.stringify(db)); }catch(e){}
+  jset(SYNC_KEY, { uid, syncedAt: row.updated_at, dirty:false });
+  cloud.lastOk = cloudHora();
+  cloud.status = "Sincronizado às " + cloud.lastOk;
+  render();
+  toast("Dados da sua conta carregados");
+}
+function resumoDados(d){
+  const c = (d && d.concursos) || [], subs = c.reduce((a,x)=>a + (x.subjects||[]).length, 0);
+  return c.length + " concurso" + (c.length === 1 ? "" : "s") + ", " + subs + " matéria" + (subs === 1 ? "" : "s");
+}
+async function cloudAsk(kind, uid){
+  let nuvem = null;
+  if(kind === "conflict"){ try{ nuvem = await cloudGet(uid, false); }catch(e){ throw e; } }
+  const quando = nuvem ? new Date(nuvem.updated_at).toLocaleString("pt-BR") : "";
+  const corpo = kind === "conflict" ? `
+    <p class="small muted" style="margin-bottom:12px">Encontrei dados na sua conta e também neste aparelho. Qual você quer manter?</p>
+    <div class="kv"><span>☁️ Na conta${quando ? " (" + esc(quando) + ")" : ""}</span><b>${esc(resumoDados(nuvem && nuvem.data))}</b></div>
+    <div class="kv"><span>📱 Neste aparelho</span><b>${esc(resumoDados(db))}</b></div>
+    <p class="hint" style="margin-top:12px">O que você não escolher será substituído.</p>
+    <button type="button" class="btn block" style="margin-top:12px" data-act="cloudKeepLocal">Manter os deste aparelho (enviar para a conta)</button>`
+    : `<p class="small muted">Sua conta ainda está vazia. Quer enviar os dados que estão neste aparelho (${esc(resumoDados(db))}) para ela?</p>`;
+  showModal(kind === "conflict" ? "Quais dados manter?" : "Enviar dados para a conta?", corpo,
+    kind === "conflict" ? "Usar os da conta" : "Enviar para a conta",
+    ()=>{
+      (async()=>{
+        try{ cloud.busy = true; if(kind === "conflict") await cloudAdopt(uid); else await cloudPush(); }
+        catch(e){ cloudStatus("Não consegui sincronizar: " + e.message); }
+        finally{ cloud.busy = false; }
+      })();
+      return true;
+    });
+}
+async function cloudSync(manual){
+  if(!cloud.session){ if(manual) toast("Entre na sua conta primeiro"); return; }
+  if(cloud.busy){ cloud.again = true; return; }
+  if(typeof navigator !== "undefined" && navigator.onLine === false){ cloudStatus("Sem internet — sincroniza quando voltar"); return; }
+  cloud.busy = true; cloud.last = Date.now();
+  if(manual) cloudStatus("Sincronizando…");
+  try{
+    const uid = cloud.session.user.id, m = syncMeta();
+    const vazio = !db || (!db.concursos.length && !(db.profile && db.profile.name));
+    const mesma = m.uid === uid;
+    const head = await cloudGet(uid, true);
+    const mudou = !!head && new Date(head.updated_at).getTime() !== new Date(m.syncedAt || 0).getTime();
+    if(!head){
+      if(vazio){ jset(SYNC_KEY, { uid, syncedAt:null, dirty:false }); cloudStatus("Conta pronta. Preencha seu perfil para começar."); }
+      else if(mesma) await cloudPush();
+      else await cloudAsk("send", uid);
+    } else if(vazio){
+      await cloudAdopt(uid);
+    } else if(mesma){
+      if(!m.dirty && mudou) await cloudAdopt(uid);
+      else if(m.dirty && !mudou) await cloudPush();
+      else if(m.dirty && mudou) await cloudAsk("conflict", uid);
+      else cloudStatus("Sincronizado" + (cloud.lastOk ? " às " + cloud.lastOk : ""));
+    } else {
+      await cloudAsk("conflict", uid);
+    }
+  }catch(e){
+    cloudStatus(e.net ? "Sem internet — sincroniza quando voltar" : "Não consegui sincronizar: " + e.message);
+  }finally{
+    cloud.busy = false;
+    if(cloud.again){ cloud.again = false; cloudSchedulePush(); }
+  }
+}
+function cloudSchedulePush(){
+  if(!cloud.session) return;
+  clearTimeout(cloud.timer);
+  cloud.timer = setTimeout(()=>cloudSync(false), 2500);
+}
+
+/* ---------- login, cadastro e senha ---------- */
+function authModal(mode){
+  const novo = mode === "signup", esq = mode === "forgot";
+  showModal(novo ? "Criar conta" : (esq ? "Esqueci minha senha" : "Entrar"), `
+    <div id="authErr" class="small" style="display:none;margin-bottom:10px;padding:9px 11px;border-radius:10px"></div>
+    <div class="field">
+      <label for="auEmail">E-mail</label>
+      <input id="auEmail" name="email" class="input" type="email" inputmode="email" autocomplete="email" autocapitalize="off" placeholder="voce@email.com">
+    </div>
+    ${esq ? "" : `<div class="field">
+      <label for="auPass">Senha</label>
+      <input id="auPass" name="password" class="input" type="password" autocomplete="${novo ? "new-password" : "current-password"}" placeholder="${novo ? "Mínimo 6 caracteres" : "Sua senha"}">
+    </div>`}
+    ${novo ? `<div class="field">
+      <label for="auPass2">Repita a senha</label>
+      <input id="auPass2" name="password2" class="input" type="password" autocomplete="new-password">
+    </div>` : ""}
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:4px">
+      ${novo ? `<button type="button" class="btn xs ghost" data-act="cloudLogin">Já tenho conta</button>` : ""}
+      ${mode === "login" ? `<button type="button" class="btn xs ghost" data-act="cloudSignup">Criar conta</button><button type="button" class="btn xs ghost" data-act="cloudForgot">Esqueci a senha</button>` : ""}
+      ${esq ? `<button type="button" class="btn xs ghost" data-act="cloudLogin">Voltar</button>` : ""}
+    </div>
+    <p class="hint" style="margin-top:12px">${novo ? "Seus dados passam a ser guardados na nuvem e aparecem em qualquer aparelho em que você entrar." : "Entre para carregar seus dados automaticamente."}</p>
+  `, novo ? "Criar conta" : (esq ? "Enviar e-mail" : "Entrar"), (vals)=>{ authSubmit(mode, vals); return false; });
+}
+function authMsg(texto, ok){
+  const el = document.getElementById("authErr"); if(!el) return toast(texto);
+  el.style.display = "block"; el.textContent = texto;
+  el.style.background = ok ? "rgba(34,197,94,.14)" : "rgba(239,68,68,.14)";
+  el.style.border = "1px solid " + (ok ? "var(--x1f6a41)" : "var(--x7a2630)");
+  el.style.color = ok ? "var(--x8ff0b3)" : "var(--xff9c9c)";
+}
+async function authSubmit(mode, vals){
+  const email = String(vals.email || "").trim().toLowerCase(), pass = String(vals.password || "");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return authMsg("Digite um e-mail válido.");
+  const btn = document.querySelector("#modalForm button[type=submit]"); if(btn) btn.disabled = true;
+  try{
+    if(mode === "forgot"){
+      await sbRaw("/auth/v1/recover", { method:"POST", body: JSON.stringify({ email }) });
+      authMsg("Se esse e-mail tiver conta, enviamos o link para criar uma nova senha.", true); return;
+    }
+    if(pass.length < 6) return authMsg("A senha precisa ter pelo menos 6 caracteres.");
+    if(mode === "signup"){
+      if(pass !== String(vals.password2 || "")) return authMsg("As senhas não são iguais.");
+      const b = await sbRaw("/auth/v1/signup", { method:"POST", body: JSON.stringify({ email, password: pass }) });
+      if(b && b.access_token){ cloudSaveSession(b); closeModal(); toast("Conta criada!"); cloudSync(true); render(); return; }
+      authMsg("Conta criada! Enviamos um e-mail de confirmação. Toque no link dele e depois volte aqui para entrar.", true); return;
+    }
+    const b = await sbRaw("/auth/v1/token?grant_type=password", { method:"POST", body: JSON.stringify({ email, password: pass }) });
+    cloudSaveSession(b); closeModal(); toast("Você entrou"); render(); cloudSync(true);
+  }catch(e){
+    authMsg(e.message);
+  }finally{
+    const b2 = document.querySelector("#modalForm button[type=submit]"); if(b2) b2.disabled = false;
+  }
+}
+function newPasswordModal(){
+  showModal("Criar nova senha", `
+    <div id="authErr" class="small" style="display:none;margin-bottom:10px;padding:9px 11px;border-radius:10px"></div>
+    <div class="field"><label for="npPass">Nova senha</label>
+      <input id="npPass" name="password" class="input" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres"></div>
+    <div class="field"><label for="npPass2">Repita a senha</label>
+      <input id="npPass2" name="password2" class="input" type="password" autocomplete="new-password"></div>
+  `, "Salvar senha", (vals)=>{
+    (async()=>{
+      const p = String(vals.password || "");
+      if(p.length < 6) return authMsg("A senha precisa ter pelo menos 6 caracteres.");
+      if(p !== String(vals.password2 || "")) return authMsg("As senhas não são iguais.");
+      try{ await sbAuthed("/auth/v1/user", { method:"PUT", body: JSON.stringify({ password: p }) }); closeModal(); toast("Senha alterada"); cloudSync(true); }
+      catch(e){ authMsg(e.message); }
+    })();
+    return false;
+  });
+}
+ACTIONS.cloudLogin = ()=>authModal("login");
+ACTIONS.cloudSignup = ()=>authModal("signup");
+ACTIONS.cloudForgot = ()=>authModal("forgot");
+ACTIONS.cloudSyncNow = ()=>cloudSync(true);
+ACTIONS.cloudKeepLocal = ()=>{
+  closeModal();
+  (async()=>{
+    try{ cloud.busy = true; cloudStatus("Enviando…"); await cloudPush(); }
+    catch(e){ cloudStatus("Não consegui sincronizar: " + e.message); }
+    finally{ cloud.busy = false; }
+  })();
+};
+ACTIONS.cloudLogout = ()=>{
+  showModal("Sair da conta?", `<p class="small muted">Seus dados continuam neste aparelho, mas deixam de ser sincronizados com a nuvem até você entrar de novo.</p>`, "Sair", ()=>{
+    const tok = cloud.session && cloud.session.access_token;
+    if(tok) sbRaw("/auth/v1/logout", { method:"POST" }, tok).catch(()=>{});
+    cloudDropSession(); cloud.status = ""; render(); toast("Você saiu da conta");
+    return true;
+  });
+};
+function cloudCardHtml(){
+  if(!cloud.session){
+    return `<div class="card">
+      <div class="card-title"><h3>☁️ Conta e nuvem</h3></div>
+      <p class="small muted" style="margin-bottom:12px">Crie uma conta para guardar seus dados na nuvem e abrir o app em qualquer aparelho com seu e-mail e senha.</p>
+      <div class="row" style="gap:8px">
+        <button class="btn primary grow" data-act="cloudLogin">Entrar</button>
+        <button class="btn grow" data-act="cloudSignup">Criar conta</button>
+      </div>
+    </div>`;
+  }
+  const m = syncMeta();
+  return `<div class="card">
+    <div class="card-title"><h3>☁️ Conta e nuvem</h3></div>
+    <div class="kv"><span>Conta</span><b style="word-break:break-all;text-align:right">${esc(cloud.session.user.email || "")}</b></div>
+    <div class="kv"><span>Situação</span><b>${esc(cloud.status || (m.dirty ? "Alterações a enviar" : "Sincronizado"))}</b></div>
+    <div class="row" style="gap:8px;margin-top:12px">
+      <button class="btn primary grow" data-act="cloudSyncNow">🔄 Sincronizar agora</button>
+      <button class="btn ghost" data-act="cloudLogout">Sair</button>
+    </div>
+  </div>`;
+}
+async function cloudHandleHash(){
+  const h = location.hash || "";
+  if(h.indexOf("access_token=") < 0) return;
+  const p = new URLSearchParams(h.replace(/^#/, ""));
+  const at = p.get("access_token"), rt = p.get("refresh_token"), tipo = p.get("type");
+  try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){}
+  if(!at) return;
+  try{
+    const u = await sbRaw("/auth/v1/user", { method:"GET" }, at);
+    cloudSaveSession({ access_token: at, refresh_token: rt, expires_in: Number(p.get("expires_in")) || 3600, user: { id:u.id, email:u.email } });
+    render();
+    if(tipo === "recovery") newPasswordModal();
+    else { toast("E-mail confirmado. Você entrou."); cloudSync(true); }
+  }catch(e){ toast("Link inválido ou expirado. Tente de novo."); }
+}
+function cloudInit(){
+  cloud.session = jget(AUTH_KEY);
+  if(cloud.session && !(cloud.session.user && cloud.session.user.id)) cloudDropSession();
+  cloudHandleHash().then(()=>{ if(cloud.session) cloudSync(false); });
+  document.addEventListener("visibilitychange", ()=>{
+    if(!cloud.session) return;
+    if(document.visibilityState === "hidden"){
+      // saiu do app/aba: envia na hora o que ainda não subiu
+      if(syncMeta().dirty){ clearTimeout(cloud.timer); cloudSync(false); }
+    } else if(Date.now() - cloud.last > 20000) cloudSync(false);
+  });
+  window.addEventListener("pagehide", ()=>{ if(cloud.session && syncMeta().dirty){ clearTimeout(cloud.timer); cloudSync(false); } });
+  window.addEventListener("online", ()=>{ if(cloud.session) cloudSync(false); });
+}
+
+/* ==================================================================
    INICIALIZAÇÃO
    ================================================================== */
 (function init(){
@@ -5361,6 +5681,7 @@ function bindOnboarding(){
   }
   bindOnboarding();
   render();
+  cloudInit();
 })();
 </script>
 </body>
