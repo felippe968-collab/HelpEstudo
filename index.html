@@ -658,6 +658,8 @@ html[data-theme="light"]{
 .lk .lkthumb{width:88px;height:58px;border-radius:9px;object-fit:cover;flex:0 0 auto;background:var(--x0a111b);display:block}
 .lk .lkph{width:88px;height:58px;border-radius:9px;flex:0 0 auto;background:var(--x0a111b);display:grid;place-items:center;font-size:24px}
 .lk .lkt{min-width:0;flex:1}
+.lk button.lkmain{background:none;border:0;padding:0;text-align:left;font:inherit;cursor:pointer}
+.lk .lkph.pdf{background:#7a1f1f;color:#fff;font-size:15px;font-weight:800}
 .lk .lkt b{display:block;font-size:14.5px;font-weight:650;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .lk .lkt span{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .imgprev{margin-top:8px;display:flex;align-items:center;gap:10px}
@@ -1003,6 +1005,9 @@ function normalize(d){
         t.notes = typeof t.notes === "string" ? t.notes : "";
         t.links = Array.isArray(t.links)
           ? t.links.map(l=>({ id: l.id || uid(), title: String(l.title||""), url: String(l.url||""), image: String(l.image||"") })).filter(l=>l.url)
+          : [];
+        t.pdfs = Array.isArray(t.pdfs)
+          ? t.pdfs.map(f=>({ id: f.id || uid(), name: String(f.name||"ebook.pdf"), size: Number(f.size)||0 }))
           : [];
       });
     });
@@ -1484,6 +1489,7 @@ function viewSubject(c){
         if((t.questions||[]).length) extras.push("❓ "+t.questions.length);
         if(t.ws) extras.push("🔎");
         if((t.links||[]).length) extras.push("🔗 "+t.links.length);
+        if((t.pdfs||[]).length) extras.push("📕 "+t.pdfs.length);
         if((t.notes||"").trim()) extras.push("🗒️");
         return `<div class="item ${t.done?"done":""}">
           <button class="check ${t.done?"on":""}" data-act="toggleTopic" data-sid="${s.id}" data-tid="${t.id}">✓</button>
@@ -1624,6 +1630,15 @@ function viewTopic(c){
         <button class="btn xs" data-act="addLink" data-tid="${t.id}">+ Link</button>
       </div>
       ${(t.links||[]).length ? t.links.map(l=>linkHtml(t, l)).join("") : '<div class="empty">Cole o link de um vídeo do YouTube ou de um site para estudar este conteúdo.</div>'}
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>📕 Ebook / PDF</h3><span class="sp"></span>
+        <label class="btn xs" style="cursor:pointer">+ PDF
+          <input type="file" accept="application/pdf,.pdf" data-act-change="pdfFile" data-tid="${t.id}" style="display:none">
+        </label>
+      </div>
+      ${(t.pdfs||[]).length ? t.pdfs.map(f=>pdfHtml(t, f)).join("") : '<div class="empty">Escolha o PDF (ebook) desta aula. Ele fica salvo no aparelho e abre com um toque.</div>'}
     </div>
 
     <div class="card">
@@ -2617,6 +2632,90 @@ ACTIONS.delLink = (el)=>{
   confirmBox("Apagar link?", "“" + (l.title || linkHost(l.url)) + "” será removido deste conteúdo.", ()=>{
     t.links = t.links.filter(x=>x.id !== l.id);
     saveDB(); render(); toast("Link apagado");
+  });
+};
+
+/* ==================================================================
+   EBOOK / PDF por conteúdo (atalho: o arquivo fica salvo no aparelho)
+   ================================================================== */
+const PDF_DB = "helpestudo_pdfs";
+function pdfDB(){
+  return new Promise((ok, fail)=>{
+    if(!window.indexedDB) return fail(new Error("sem indexedDB"));
+    const r = indexedDB.open(PDF_DB, 1);
+    r.onupgradeneeded = ()=>{ r.result.createObjectStore("files"); };
+    r.onsuccess = ()=>ok(r.result);
+    r.onerror = ()=>fail(r.error);
+  });
+}
+async function pdfPut(id, blob){
+  const d = await pdfDB();
+  return new Promise((ok, fail)=>{
+    const tx = d.transaction("files","readwrite");
+    tx.objectStore("files").put(blob, id);
+    tx.oncomplete = ()=>ok(); tx.onerror = ()=>fail(tx.error);
+  });
+}
+async function pdfGet(id){
+  const d = await pdfDB();
+  return new Promise((ok, fail)=>{
+    const rq = d.transaction("files").objectStore("files").get(id);
+    rq.onsuccess = ()=>ok(rq.result || null); rq.onerror = ()=>fail(rq.error);
+  });
+}
+async function pdfDel(id){
+  try{
+    const d = await pdfDB();
+    d.transaction("files","readwrite").objectStore("files").delete(id);
+  }catch(e){}
+}
+function pdfSize(n){
+  if(!n) return "";
+  return n >= 1048576 ? (n/1048576).toFixed(1).replace(".",",") + " MB" : Math.max(1, Math.round(n/1024)) + " KB";
+}
+function pdfHtml(t, f){
+  return `<div class="lk">
+    <button type="button" class="lkmain" data-act="openPdf" data-tid="${t.id}" data-id="${f.id}">
+      <span class="lkph pdf">PDF</span>
+      <span class="lkt"><b>${esc(f.name.replace(/\.pdf$/i,""))}</b><span>Toque para abrir${f.size ? " · " + pdfSize(f.size) : ""}</span></span>
+    </button>
+    <button class="icon-btn sm" data-act="delPdf" data-tid="${t.id}" data-id="${f.id}" title="Remover" aria-label="Remover PDF">✕</button>
+  </div>`;
+}
+ACTIONS.pdfFile = async (el)=>{
+  const file = el.files && el.files[0]; if(!file) return;
+  const f = findTopicById(el.dataset.tid); if(!f) return;
+  if(!/\.pdf$/i.test(file.name) && file.type !== "application/pdf"){ el.value = ""; return toast("Escolha um arquivo PDF"); }
+  const id = uid();
+  try{
+    await pdfPut(id, file);
+  }catch(e){ el.value = ""; return toast("Não consegui salvar esse PDF no aparelho"); }
+  f.topic.pdfs = f.topic.pdfs || [];
+  f.topic.pdfs.unshift({ id, name: file.name.slice(0,120), size: file.size });
+  saveDB(); render(); toast("PDF adicionado");
+};
+ACTIONS.openPdf = async (el)=>{
+  const f = findTopicById(el.dataset.tid); if(!f) return;
+  const m = (f.topic.pdfs||[]).find(x=>x.id === el.dataset.id); if(!m) return;
+  let blob = null;
+  try{ blob = await pdfGet(m.id); }catch(e){}
+  if(!blob) return toast("Esse PDF não está neste aparelho. Remova e adicione de novo.");
+  const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+  const w = window.open(url, "_blank");
+  if(!w){
+    const a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener"; a.download = m.name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+  setTimeout(()=>URL.revokeObjectURL(url), 10 * 60 * 1000);
+};
+ACTIONS.delPdf = (el)=>{
+  const f = findTopicById(el.dataset.tid); if(!f) return;
+  const t = f.topic, m = (t.pdfs||[]).find(x=>x.id === el.dataset.id); if(!m) return;
+  confirmBox("Remover PDF?", "“" + m.name + "” será removido deste conteúdo e do aparelho.", ()=>{
+    t.pdfs = t.pdfs.filter(x=>x.id !== m.id);
+    pdfDel(m.id);
+    saveDB(); render(); toast("PDF removido");
   });
 };
 
@@ -4330,6 +4429,13 @@ function parsePares(raw){
   return pares;
 }
 
+const EXEMPLO_PARES = "Crase,Fusão da preposição A com o artigo A,Sujeito,Termo sobre o qual se declara algo,Predicado,O que se declara sobre o sujeito";
+ACTIONS.exemploPares = ()=>{
+  exemploBox("Exemplo de cards (nome,definição)", EXEMPLO_PARES,
+    "Tudo numa linha: <b>título, definição, título, definição…</b> Cada vírgula separa um texto, então <b>não use vírgula dentro da definição</b>. " +
+    "Se precisar, coloque um card por linha: aí só a <b>primeira</b> vírgula separa.");
+};
+
 ACTIONS.importPairs = (el)=>{
   const c = concursoAtual(); if(!c) return toast("Crie um concurso primeiro");
   let s = null, fixo = null;
@@ -4351,7 +4457,8 @@ ACTIONS.importPairs = (el)=>{
     <div class="field">
       <label for="ipTxt">Cole aqui (um por linha)</label>
       <textarea id="ipTxt" name="texto" class="input" style="min-height:150px" placeholder="FUTEBOL,É um esporte onde jogadores jogam num campo e quem fizer gols ganha&#10;REGRA DE 3,É uma regra na matemática que avalia grandezas diferentes"></textarea>
-      <div class="hint">Formato: <b>nome,definição</b>. A primeira vírgula separa as duas partes.</div>
+      <div class="hint">Formato: <b>nome,definição</b>. A primeira vírgula separa as duas partes. Cuidado: vírgula extra dentro da definição quebra o texto.</div>
+      <button type="button" class="btn xs ghost" style="margin-top:8px" data-act="exemploPares">ℹ️ Ver exemplo</button>
     </div>
     <div class="field">
       <label>Importar como</label>
