@@ -659,6 +659,9 @@ html[data-theme="light"]{
 .lk .lkph{width:88px;height:58px;border-radius:9px;flex:0 0 auto;background:var(--x0a111b);display:grid;place-items:center;font-size:24px}
 .lk .lkt{min-width:0;flex:1}
 .lk button.lkmain{background:none;border:0;padding:0;text-align:left;font:inherit;cursor:pointer}
+.rvbar{height:6px;border-radius:99px;background:var(--x0a111b);overflow:hidden;margin:8px 0 7px}
+.rvbar i{display:block;height:100%;border-radius:99px;transition:width .3s}
+.rvtxt{font-size:12px;line-height:1.4}
 .lk .lkph.pdf{background:#7a1f1f;color:#fff;font-size:15px;font-weight:800}
 .lk .lkt b{display:block;font-size:14.5px;font-weight:650;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .lk .lkt span{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1008,6 +1011,11 @@ function normalize(d){
           : [];
         t.pdfs = Array.isArray(t.pdfs)
           ? t.pdfs.map(f=>({ id: f.id || uid(), name: String(f.name||"ebook.pdf"), size: Number(f.size)||0 }))
+          : [];
+        t.revisoes = Array.isArray(t.revisoes)
+          ? t.revisoes.map(r=>({ id: r.id || uid(), date: String(r.date||""), nivel: String(r.nivel||"") }))
+              .filter(r=>r.date && (r.nivel === "dificil" || r.nivel === "medio" || r.nivel === "facil"))
+              .sort((a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0)
           : [];
       });
     });
@@ -1446,6 +1454,7 @@ function viewSubjects(c){
   return `
     <div class="page-head"><h2>Matérias</h2><span class="sp grow"></span>
       <button class="btn xs ghost" data-act="importSubjects" data-cid="${c.id}" title="Importar matérias">📥</button>
+      ${c.subjects.length ? `<button class="btn xs ghost" data-act="pdfObs" title="PDF unificado das observações" aria-label="PDF unificado das observações">📑</button>` : ""}
       ${c.subjects.length ? `<button class="btn xs ghost" data-act="pdfMaterias" title="Gerar PDF das matérias" aria-label="Gerar PDF das matérias">📄</button>` : ""}
       ${c.subjects.length ? `<button class="btn xs ghost" data-act="selStart" data-kind="subjects" title="Apagar várias matérias" aria-label="Apagar várias matérias">🗑️</button>` : ""}
       <button class="btn xs" data-act="newSubject" data-cid="${c.id}">+ Matéria</button>
@@ -1671,10 +1680,13 @@ function viewTopic(c){
       <p class="hint" style="text-align:center">Isso abate direto das horas restantes do concurso (${fmtMin(totalMin)} nesta matéria).</p>
     </div>
 
+    ${revCardHtml(t)}
+
     <div class="card">
       <div class="card-title"><h3>🗒️ Observação</h3></div>
       <textarea class="input" data-act-input="saveNotes" data-act-change="saveNotes" data-tid="${t.id}" style="min-height:110px;resize:vertical" placeholder="Anote algo simples sobre esta aula…">${esc(t.notes||"")}</textarea>
       <p class="hint" id="obsHint">Salva sozinho enquanto você escreve.</p>
+      <button class="btn xs ghost" style="margin-top:6px" data-act="pdfObsTopic" data-tid="${t.id}">📄 Gerar PDF desta observação</button>
     </div>
 
     <div class="card">
@@ -2716,6 +2728,96 @@ ACTIONS.delPdf = (el)=>{
     t.pdfs = t.pdfs.filter(x=>x.id !== m.id);
     pdfDel(m.id);
     saveDB(); render(); toast("PDF removido");
+  });
+};
+
+/* ==================================================================
+   REVISÃO por conteúdo (semáforo de dias desde o último estudo)
+   ================================================================== */
+const REV_COR = { verde:"#22c55e", amarelo:"#eab308", laranja:"#f97316", vermelho:"#ef4444" };
+const REV_NIVEIS = {
+  dificil:{ ico:"😣", nome:"Difícil", fator:0.6 },
+  medio:  { ico:"😐", nome:"Médio",   fator:1 },
+  facil:  { ico:"🙂", nome:"Fácil",   fator:1.5 }
+};
+/* data (ISO) do último estudo: lançamento de horas ou revisão, o que for mais recente */
+function ultimoEstudo(t){
+  let d = null;
+  (db.log||[]).forEach(l=>{ if(l.tid === t.id && l.date && (!d || l.date > d)) d = l.date; });
+  (t.revisoes||[]).forEach(r=>{ if(r.date && (!d || r.date > d)) d = r.date; });
+  return d;
+}
+/* verde < 4 dias · amarelo até ~1 semana · laranja alguns dias · vermelho muitos dias.
+   A última dificuldade encurta (difícil) ou alonga (fácil) esses prazos. */
+function semaforoRev(t){
+  const ult = ultimoEstudo(t); if(!ult) return null;
+  const du = daysUntil(ult);
+  const dias = du == null ? 0 : Math.max(0, -du);
+  const rv = t.revisoes || [];
+  const ultima = rv.length ? rv[rv.length - 1] : null;
+  const f = ultima ? REV_NIVEIS[ultima.nivel].fator : 1;
+  const vde = Math.round(4 * f), ama = Math.round(8 * f), lar = Math.round(15 * f);
+  const nivel = dias < vde ? "verde" : dias < ama ? "amarelo" : dias < lar ? "laranja" : "vermelho";
+  const pct = Math.max(5, Math.min(100, Math.round(dias / lar * 100)));
+  return { dias, nivel, pct, ult };
+}
+function revCardHtml(t){
+  const sm = semaforoRev(t);
+  const rv = t.revisoes || [];
+  const cont = k => rv.filter(r=>r.nivel === k).length;
+  let corpo;
+  if(!sm){
+    corpo = '<div class="empty">Quando você lançar as horas de estudo deste conteúdo, começo a contar os dias para revisar.</div>';
+  }else{
+    const cor = REV_COR[sm.nivel];
+    const msg = sm.dias === 0
+      ? "Você estudou hoje."
+      : "Faz " + sm.dias + (sm.dias === 1 ? " dia" : " dias") + " que você estudou essa matéria." + (sm.nivel === "verde" ? "" : " Bora revisar?");
+    corpo = `<div class="rvbar" aria-hidden="true"><i style="width:${sm.pct}%;background:${cor}"></i></div>
+      <div class="rvtxt" style="color:${cor}">${esc(msg)}</div>`;
+  }
+  const ultima = rv.length ? rv[rv.length - 1] : null;
+  const resumo = ultima
+    ? `<p class="hint" style="margin-top:8px">🔁 ${rv.length} ${rv.length === 1 ? "revisão" : "revisões"} · 🙂 ${cont("facil")} · 😐 ${cont("medio")} · 😣 ${cont("dificil")} · última em ${dateBR(ultima.date)} (${REV_NIVEIS[ultima.nivel].nome})</p>
+       <button class="btn xs ghost" data-act="undoRev" data-tid="${t.id}">↩️ Desfazer última</button>`
+    : "";
+  return `
+    <div class="card">
+      <div class="card-title"><h3>🔁 Revisão</h3><span class="sp"></span>
+        <button class="btn xs" data-act="revisar" data-tid="${t.id}">Revisar</button>
+      </div>
+      ${corpo}
+      ${resumo}
+    </div>`;
+}
+ACTIONS.revisar = (el)=>{
+  const f = findTopicById(el.dataset.tid); if(!f) return;
+  const t = f.topic;
+  const opts = Object.keys(REV_NIVEIS).map(k=>
+    `<label class="row" style="gap:10px;margin-top:8px"><input type="radio" name="nivel" value="${k}"> ${REV_NIVEIS[k].ico} ${REV_NIVEIS[k].nome}</label>`).join("");
+  showModal("Revisar: " + t.name, `
+    <div class="field">
+      <label>O que achou da revisão?</label>
+      ${opts}
+    </div>
+    <div class="field">
+      <label for="rvDate">Dia</label>
+      <input id="rvDate" name="date" class="input" type="date" value="${todayISO()}" max="${todayISO()}">
+    </div>
+  `, "Salvar revisão", (vals)=>{
+    if(!vals.nivel) return toast("Escolha: difícil, médio ou fácil") || false;
+    t.revisoes = t.revisoes || [];
+    t.revisoes.push({ id: uid(), date: vals.date || todayISO(), nivel: vals.nivel });
+    t.revisoes.sort((a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+    saveDB(); render(); toast("Revisão registrada");
+    return true;
+  });
+};
+ACTIONS.undoRev = (el)=>{
+  const f = findTopicById(el.dataset.tid); if(!f) return;
+  const t = f.topic; if(!(t.revisoes||[]).length) return;
+  confirmBox("Desfazer a última revisão?", "A revisão mais recente será removida deste conteúdo.", ()=>{
+    t.revisoes.pop(); saveDB(); render(); toast("Revisão desfeita");
   });
 };
 
@@ -5172,6 +5274,127 @@ ACTIONS.pdfMaterias = ()=>{
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 5000);
   toast("PDF salvo: " + nome);
+};
+
+/* ---------- PDF das observações (unificado ou de um conteúdo) ---------- */
+function pdfLimpa(str){
+  return String(str == null ? "" : str).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, "");
+}
+/* quebra a observação em linhas, mantendo os parágrafos ("" = linha em branco) */
+function pdfLinhasObs(txt, size, larg){
+  const out = [];
+  pdfLimpa(txt).replace(/\r/g, "").split("\n").forEach(par=>{
+    if(!par.trim()){ if(out.length && out[out.length-1] !== "") out.push(""); return; }
+    pdfQuebra(par, size, false, larg).forEach(l=>out.push(l));
+  });
+  while(out.length && out[out.length-1] === "") out.pop();
+  return out;
+}
+function pdfObservacoes(c, grupos){
+  const d = new Date();
+  const dataTxt = pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + "/" + d.getFullYear();
+  const total = grupos.reduce((a,g)=>a + g.topics.length, 0);
+  const doc = pdfDoc();
+  const mut = [0.42, 0.48, 0.58], fraco = [0.55, 0.60, 0.68], tinta = [0.10, 0.14, 0.20];
+
+  doc.texto("HELPESTUDO", { size:8, bold:true, cor:[0.38, 0.44, 0.56], y: PDF_H - PDF_M });
+  doc.texto("Observações", { size:21, bold:true, y: PDF_H - PDF_M - 25 });
+  let topo = PDF_H - PDF_M - 44;
+  const nomeConc = pdfQuebra(pdfLimpa(c.name), 11.5, false, PDF_CW);
+  if(nomeConc.length > 2){ nomeConc.length = 2; nomeConc[1] = nomeConc[1].replace(/.{3}$/, "…"); }
+  nomeConc.forEach((ln, i)=> doc.textoEm(ln, 11.5, false, PDF_M, topo - i * 14, mut));
+  topo -= nomeConc.length * 14;
+  doc.texto(total + (total === 1 ? " observação" : " observações") + "  ·  " + dataTxt, { size:8.5, cor:fraco, y: topo - 4 });
+  const linhaY = topo - 17;
+  doc.retangulo(PDF_M, linhaY, PDF_CW, 1, [0.84, 0.88, 0.93]);
+  doc.y = linhaY - 22;
+
+  grupos.forEach(g=>{
+    const cor = pdfCor(g.s.color);
+    const nomeM = pdfQuebra(pdfLimpa(g.s.name), 13.5, true, PDF_CW - 20);
+    if(nomeM.length > 3){ nomeM.length = 3; nomeM[2] = nomeM[2].replace(/.{3}$/, "…"); }
+    if(doc.y - (nomeM.length * 16 + 60) < PDF_M + 34) doc.novaPagina();
+    doc.retangulo(PDF_M, doc.y - 2, 9, 9, cor);
+    nomeM.forEach((ln, i)=> doc.textoEm(ln, 13.5, true, PDF_M + 17, doc.y - i * 16, [0.08, 0.11, 0.17]));
+    doc.y -= nomeM.length * 16 + 8;
+
+    g.topics.forEach(t=>{
+      const titulo = pdfQuebra(pdfLimpa(t.name), 11, true, PDF_CW - 14);
+      const linhas = pdfLinhasObs(t.notes, 10, PDF_CW - 14);
+      const minimo = titulo.length * 14 + Math.min(linhas.length, 2) * 13.2;
+      if(doc.y - minimo < PDF_M + 34) doc.novaPagina();
+      titulo.forEach((ln, i)=> doc.textoEm(ln, 11, true, PDF_M + 14, doc.y - i * 14, [0.08, 0.11, 0.17]));
+      doc.y -= titulo.length * 14;
+      linhas.forEach(ln=>{
+        if(doc.y - 13.2 < PDF_M + 34) doc.novaPagina();
+        if(ln) doc.textoEm(ln, 10, false, PDF_M + 14, doc.y, tinta);
+        doc.y -= ln ? 13.2 : 7;
+      });
+      doc.y -= 14;
+    });
+    doc.y -= 8;
+  });
+
+  const pgs = doc.fim();
+  pgs.forEach((st, i)=>{
+    const base = PDF_M - 14;
+    pgs[i] = st + "\n" +
+      "q 0.55 0.60 0.68 rg BT /F1 8 Tf 1 0 0 1 " + PDF_M + " " + base + " Tm (" + pdfTexto("HelpEstudo · observações") + ") Tj ET Q\n" +
+      "q 0.55 0.60 0.68 rg BT /F1 8 Tf 1 0 0 1 " + (PDF_W - PDF_M - 26) + " " + base + " Tm (" + (i + 1) + "/" + pgs.length + ") Tj ET Q";
+  });
+  return pdfMontar(pgs);
+}
+function baixarPdfTexto(arquivo, nome){
+  const blob = new Blob([pdfBytes(arquivo)], { type:"application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+  toast("PDF salvo: " + nome);
+}
+const temObs = t => !!String(t.notes || "").trim();
+
+ACTIONS.pdfObs = ()=>{
+  const c = concursoAtual();
+  if(!c || !c.subjects.length) return toast("Cadastre matérias antes");
+  flushNotes();
+  if(!c.subjects.some(s=>s.topics.some(temObs))) return toast("Ainda não há observações escritas");
+  const rows = c.subjects.map(s=>{
+    const n = s.topics.filter(temObs).length;
+    return `<label class="row" style="gap:10px;margin-top:8px;${n ? "" : "opacity:.45"}">
+      <input type="checkbox" name="s_${s.id}" value="1" ${n ? "checked" : "disabled"}>
+      <span><b>${esc(s.name)}</b> <span class="tiny muted">· ${n} de ${s.topics.length} com observação</span></span></label>`;
+  }).join("");
+  showModal("PDF unificado das observações", `
+    <div class="field">
+      <label class="row" style="gap:10px"><input type="checkbox" id="obsAll" checked> <b>Todas as matérias</b></label>
+      ${rows}
+      <div class="hint">Cada matéria vira um título, com a observação de cada conteúdo na ordem em que estão. Conteúdos sem observação ficam de fora.</div>
+    </div>
+  `, "Gerar PDF", (vals)=>{
+    const grupos = c.subjects
+      .filter(s=>vals["s_" + s.id])
+      .map(s=>({ s, topics: s.topics.filter(temObs) }))
+      .filter(g=>g.topics.length);
+    if(!grupos.length) return toast("Marque ao menos uma matéria") || false;
+    baixarPdfTexto(pdfObservacoes(c, grupos), "helpestudo-observacoes-" + todayISO() + ".pdf");
+    return true;
+  }, { after: ()=>{
+    const all = document.getElementById("obsAll");
+    if(all) all.addEventListener("change", ()=>{
+      document.querySelectorAll('#modalForm input[name^="s_"]:not(:disabled)').forEach(x=>{ x.checked = all.checked; });
+    });
+  }});
+};
+
+ACTIONS.pdfObsTopic = (el)=>{
+  const c = concursoAtual(); if(!c) return;
+  flushNotes();
+  const f = findTopicById(el.dataset.tid); if(!f) return;
+  if(!temObs(f.topic)) return toast("Escreva a observação primeiro");
+  const slug = pdfLimpa(f.topic.name).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30) || "conteudo";
+  baixarPdfTexto(pdfObservacoes(c, [{ s: f.subject, topics: [f.topic] }]), "helpestudo-obs-" + slug + "-" + todayISO() + ".pdf");
 };
 
 /* ---------- backup ---------- */
